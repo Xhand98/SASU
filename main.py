@@ -2,18 +2,23 @@ import os
 import discord
 import requests
 import json
+from replit import db
 import gethours
-
-
+import getsteamid
 
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
+
+def get_steamid(steamid):
+  steamid = getsteamid.ejecutar(steamid)
+  return steamid
+
+
 def get_steamh():
   steamhresult = gethours.ejecutar()
-  result = gethours.hours
-  return result
+  return steamhresult
 
 
 def get_cfact():
@@ -29,7 +34,12 @@ def get_quote():
   author = ' ***-' + json_data[0]['a'] + '***'
   quote = '> ' + json_data[0]['q'] + author
   return quote
-  
+
+
+def get_user(content):
+  _, username = content.split(' ', 1)
+  return username
+
 
 @client.event
 async def on_ready():
@@ -50,11 +60,18 @@ async def on_message(message):
     await message.channel.send(cfact)
 
   if message.content.startswith('!steamhours'):
-    steamhresults = get_steamh()
-    await message.channel.send(steamhresults)
+    steamhresult = get_steamh()
+    await message.channel.send(steamhresult)
 
   if message.content.startswith('kys'):
-    await message.channel.send('Ill make sure to Kiss Myself very well :D')
+    await message.channel.send(
+        f'Ill make sure to Kiss Myself very well :D {message.author.mention}')
+
+  if message.content.startswith('!getuser'):
+    user_message = get_user(message.content)
+    steamid = get_steamid(user_message)
+    print(steamid)
+    await message.channel.send(steamid)
 
 
 client.run(os.environ['TOKEN'])
