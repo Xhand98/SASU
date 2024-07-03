@@ -1,9 +1,7 @@
 import requests
-import dotenv
 import os
 
 def ejecutar(user):
-    dotenv.load_dotenv()
 
     api_key = os.environ['STEAM_API_KEY']
     steam_id = user

@@ -8,6 +8,7 @@ import getsteamid
 import embed
 import datetime
 import getgames
+import getpic
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -27,6 +28,9 @@ def get_steamg(ans):
   ans = getgames.ejecutar(ans)
   return ans
 
+def get_steampfp(pfp):
+  pfp = getpic.ejecutar(pfp)
+  return pfp
 
 def get_cfact():
   response = requests.get('https://catfact.ninja/fact')
@@ -156,6 +160,12 @@ async def on_message(message):
     await message.channel.send(embed=coso)
 
   if message.content.startswith('!getgames'):
+    user_message = get_user(message.content)
+    steamid = process_user_or_steamid(user_message)
+    user_games = get_steamg(steamid)
+  await message.channel.send(user_games)
+  
+  if message.content.startswith('!getpfp'):
     user_message = get_user(message.content)
     steamid = process_user_or_steamid(user_message)
     user_games = get_steamg(steamid)
