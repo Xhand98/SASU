@@ -2,29 +2,23 @@ import requests
 import dotenv
 import os
 
-
-def ejecutar():
+def ejecutar(user):
     dotenv.load_dotenv()
 
     api_key = os.environ['STEAM_API_KEY']
-    # Tu SteamID
-    steam_id = '76561198930935250'
+    steam_id = user
 
-    # URL de la API de Steam para obtener la lista de juegos que posees y las horas jugadas
     url = f'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={api_key}&steamid={steam_id}&format=json'
 
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
-        total_playtime_minutes = sum(game['playtime_forever']
-                                     for game in data['response']['games'])
+        total_playtime_minutes = sum(game['playtime_forever'] for game in data['response']['games'])
         total_playtime_hours = total_playtime_minutes / 60
-        ## print(f'Has jugado un total de {total_playtime_hours:.2f} horas en Steam.')
-        result = f'Has jugado un total de {total_playtime_hours:.2f} horas en Steam'
+        print(f'Has jugado un total de {total_playtime_hours:.2f} horas en Steam.')
+        user = f'Has jugado un total de {total_playtime_hours:.2f} horas en Steam'
     else:
         print(f'Error al obtener los datos: {response.status_code}')
-    return result
 
-
-hours = ejecutar()
+    return user
