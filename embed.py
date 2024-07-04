@@ -28,14 +28,14 @@ def create_embed(em_title: str, em_description: str, em_color: discord.Color.red
 
     if image is not None:
         try:
-            Embed.set_image(image)
+            Embed.set_image(url=image)
         except (ValueError, IndexError, TypeError, discord.HTTPException) as error:
             print('An error occurred while adding an image to the embed')
             Embed.add_field(name='Add Image Error', value=error, inline=False)
 
     if thumbnail is not None:
         try:
-            Embed.set_thumbnail(thumbnail)
+            Embed.set_thumbnail(url=thumbnail)
         except (ValueError, IndexError, TypeError, discord.HTTPException) as error:
             print('An error occurred while adding a thumbnail to the embed')
             Embed.add_field(name='Add Thumbnail Error', value=error, inline=False)

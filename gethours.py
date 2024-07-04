@@ -15,7 +15,7 @@ def ejecutar(user):
         total_playtime_minutes = sum(game['playtime_forever'] for game in data['response']['games'])
         total_playtime_hours = total_playtime_minutes / 60
         print(f'Has jugado un total de {total_playtime_hours:.2f} horas en Steam.')
-        user = f'Has jugado un total de {total_playtime_hours:.2f} horas en Steam'
+        user = f'{total_playtime_hours:.2f} hours'
     else:
         print(f'Error al obtener los datos: {response.status_code}')
 
