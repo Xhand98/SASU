@@ -1,15 +1,25 @@
+import datetime
+import json
 import os
+
 import discord
 import requests
-import json
+
+from getfunctions.getbadges import get_badges as getbadges
+from getfunctions.getbadges import get_levels as getlevels
+from getfunctions.getgames import ejecutar as getgames
+from getfunctions.gethours import ejecutar as gethours
+from getfunctions.getpic import get_country as getcountry
+from getfunctions.getpic import ejecutar as getpic
+from getfunctions.getpic import link as getlink
+from getfunctions.getpic import personaname as getpersonaname
+from getfunctions.getsteamid import ejecutar as getsteamid
+
 from replit import db
-import gethours
-import getsteamid
+
 import embed
-import datetime
-import getgames
-import getpic
-import getbadges
+
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -17,42 +27,42 @@ client = discord.Client(intents=intents)
 
 
 def get_steamid(steamid):
-    steamid = getsteamid.ejecutar(steamid)
+    steamid = getsteamid(steamid)
     return steamid
 
 
 def get_steamh(res):
-    res = gethours.ejecutar(res)
+    res = gethours(res)
     return res
 
 
 def get_steamg(ans):
-    ans = getgames.ejecutar(ans)
+    ans = getgames(ans)
     return ans
 
 
 def get_steampfp(pfp):
-    pfp = getpic.ejecutar(pfp)
+    pfp = getpic(pfp)
     return pfp
 
 def get_steamname(pfp):
-  pfp = getpic.personaname(pfp)
+  pfp = getpersonaname(pfp)
   return pfp
 
 def get_steamlink(pfp):
-  pfp = getpic.link(pfp)
+  pfp = getlink(pfp)
   return pfp
 
 def get_steamlevels(pfp):
-  level  = getbadges.get_levels(pfp)
+  level  = getlevels(pfp)
   return level
 
 def get_steambadges(pfp):
-  level  = getbadges.get_badges(pfp)
+  level  = getbadges(pfp)
   return level
 
 def get_steamcountry(pfp):
-  country  = getpic.get_country(pfp)
+  country  = getcountry(pfp)
   return country
 
 def get_cfact():
@@ -213,7 +223,7 @@ async def on_message(message):
       steamid = process_user_or_steamid(user_message)
       level = get_steamlevels(steamid)
       await message.channel.send(level)
-                                
+
     if message.content.startswith('!getbadges'):
       user_message = get_user(message.content)
       steamid = process_user_or_steamid(user_message)
@@ -226,5 +236,5 @@ async def on_message(message):
       steamid = process_user_or_steamid(user_message)
       country = get_steamcountry(steamid)
       await message.channel.send(country)
-        
+
 client.run(os.environ['TOKEN'])
