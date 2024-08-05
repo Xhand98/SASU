@@ -1,4 +1,5 @@
 import sqlite3
+import re
 from NewSimpleSQL import Database
 import discord
 from discord.ext import commands
@@ -51,22 +52,41 @@ async def gethours_command(ctx: discord.ApplicationContext, *, steamid: str = No
     if steamid:
         hours = await get_steamh(steamid)
         if hours:
-            await ctx.respond(f"{steamid} has {hours:.2f} hours in Steam.")
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')  
+            embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} has {round(hours, 2)} hours.", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find hours for SteamID {steamid}.")
     else:
         await ctx.respond(f"Invalid SteamID or user not found.")
 
+
+
 @bot.slash_command(name="getsteamid", description="Get the Steam ID of a user.")
-async def getsteamid_command(ctx: discord.ApplicationContext, *, steamid: str = None):
+async def getsteamid_command(ctx: discord.ApplicationContext, *, steamurl: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
-    if steamid:
-        await ctx.respond(f"SteamID is {steamid}.")
+    
+    # If no URL is provided, try to retrieve it from the database
+    if steamurl is None:
+        steamurl = await get_steamid_from_db(str(ctx.author.id))
+    
+    # Extract the last part of the URL using a regex pattern
+    if steamurl:
+        match = re.search(r"(?:https?://)?steamcommunity\.com/(?:id|profiles)/([^/]+)", steamurl)
+        if match:
+            steamid = match.group(1)
+            steamid = await process_user_or_steamid(steamid)
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Steamid", description=f"{user_name}'s SteamID is {steamid}", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
+        else:
+            await ctx.respond(f"Invalid Steam URL. Please provide a correct Steam URL.")
     else:
-        await ctx.respond(f"Couldn't find SteamID.")
+        await ctx.respond(f"Couldn't find Steam URL or SteamID.")
 
 @bot.slash_command(name="getgames", description="Get the number of all the games a user owns.")
 async def getgames_command(ctx: discord.ApplicationContext, *, steamid: str = None):
@@ -77,7 +97,11 @@ async def getgames_command(ctx: discord.ApplicationContext, *, steamid: str = No
     if steamid:
         games = await getinfo.get_games(steamid)
         if games:
-            await ctx.respond(f"{steamid} owns {games} games.")
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Games", description=f"{user_name} has {games} games.", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find the number of games for SteamID {steamid}.")
     else:
@@ -92,7 +116,13 @@ async def getpfp_command(ctx: discord.ApplicationContext, *, steamid: str = None
     if steamid:
         pic_data = await getinfo.get_pic(steamid)
         if pic_data and pic_data.get('avatar'):
-            await ctx.respond(f"{pic_data['avatar']}")
+            avatar = pic_data["avatar"]
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name} Pfp", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            embed.set_image(url=avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find profile picture for SteamID {steamid}.")
     else:
@@ -107,7 +137,12 @@ async def getlink_command(ctx: discord.ApplicationContext, *, steamid: str = Non
     if steamid:
         pic_data = await getinfo.get_pic(steamid)
         if pic_data and pic_data.get('profileurl'):
-            await ctx.respond(f"{pic_data['profileurl']}")
+            url = pic_data["profileurl"]
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Link", description=f"{user_name}'s link is {url}", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find profile link for SteamID {steamid}.")
     else:
@@ -122,7 +157,11 @@ async def getlevel_command(ctx: discord.ApplicationContext, *, steamid: str = No
     if steamid:
         level = await getinfo.get_level(steamid)
         if level is not None:
-            await ctx.respond(f"User at SteamID {steamid} is at level {level}.")
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Level", description=f"{user_name}'s level is {level}", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find the level for SteamID {steamid}.")
     else:
@@ -137,7 +176,11 @@ async def getbadges_command(ctx: discord.ApplicationContext, *, steamid: str = N
     if steamid:
         badges = await getinfo.get_badges(steamid)
         if badges is not None:
-            await ctx.respond(f"SteamID {steamid} has {badges} badges.")
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Badges", description=f"{user_name} has {badges} badges.", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find the badges for SteamID {steamid}.")
     else:
@@ -152,7 +195,11 @@ async def getcountry_command(ctx: discord.ApplicationContext, *, steamid: str = 
     if steamid:
         country = await getinfo.get_country(steamid)
         if country:
-            await ctx.respond(f"SteamID {steamid} is from {country}.")
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Country", description=f"{user_name}'s lives in {country}", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find the country for SteamID {steamid}.")
     else:
@@ -175,7 +222,7 @@ async def getuser_command(ctx: discord.ApplicationContext, *, steamid: str = Non
             level = await getinfo.get_level(steamid)
             badges = await getinfo.get_badges(steamid)
             country = await getinfo.get_country(steamid)
-            achievements = await getachievements.get_player_games(steamid)
+            achievements = await getachievements.main(steamid)
             coso = embed.create_embed(
                 'User info',
                 'Preview of a user’s profile',
@@ -195,9 +242,9 @@ async def getuser_command(ctx: discord.ApplicationContext, *, steamid: str = Non
                     ('\u200B', '\u200B', True)
                 ]
             )
+            await ctx.respond(embed=coso)
             final = time.perf_counter()
             print(f"se tomo {final - inicio:.2f} segundos")
-            await ctx.respond(embed=coso)
         except Exception as e:
             print(f"Error getting user info: {e}")
             await ctx.respond(f"Couldn't retrieve information for SteamID {steamid}.")
@@ -213,7 +260,12 @@ async def getlatestgame_command(ctx: discord.ApplicationContext, *, steamid: str
     if steamid:
         ico = await getgameico.ejecutar(steamid)
         if ico is not None:
-            await ctx.respond(f"Latest game icon: {ico}")
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Latest Game", color=discord.Color.random())
+            embed.set_image(url=ico)
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find the latest game for SteamID {steamid}.")
     else:
@@ -244,9 +296,13 @@ async def getachievements_command(ctx: discord.ApplicationContext, *, steamid: s
         steamid = await get_steamid_from_db(str(ctx.author.id))
     steamid = await process_user_or_steamid(steamid)
     if steamid:
-        achievements = await getachievements.get_player_games(steamid)
+        achievements = await getachievements.main(steamid)
         if achievements is not None:
-            await ctx.respond(f"You have unlocked {achievements} achievements.")
+            pic_data = await getinfo.get_pic(steamid)
+            user_name = pic_data.get('personaname')
+            embed = discord.Embed(title=f"{user_name}'s Achievements", description=f"{user_name} has {achievements} achievements.", color=discord.Color.random())
+            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=embed)
         else:
             await ctx.respond(f"Couldn't find your achievements.")
     else:
@@ -290,22 +346,21 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'
     
     if language == 'en':
         tutorial_text = (
-            "**Welcome to the Steam Bot Setup Tutorial!**\n\n"
-            "**1. Setting Up Your SteamID**\n"
+            "# Welcome to the Steam Bot Setup Tutorial!\n\n"
+            "## 1. Setting Up Your SteamID\n"
             "To link your Steam account with the bot, you'll need to provide your SteamID. Here's how you can do it:\n"
-            "1. **Find Your SteamID:**\n"
-            "   - If you already know your SteamID, you can skip this step. Otherwise, use one of the following methods:\n"
-            "     - **Method 1:** Use the SteamID Finder tool available online (search for 'SteamID Finder' on your preferred search engine).\n"
-            "     - **Method 2:** Open your Steam profile in a browser and look at the URL. If the URL contains a long number, that is your SteamID. If not, you might need to use the SteamID Finder tool.\n\n"
-            "**2. Linking Your SteamID with the Bot**\n"
+            "### 1. Find Your SteamID:\n"
+            "###   - If you already know your SteamID, you can skip this step. Otherwise, use one of the following methods:\n"
+            "      The Method: Open your Steam profile in a browser and copy the URL and paste it in, `/getsteamid`, the output is your steamID.\n\n"
+            "## 2. Linking Your SteamID with the Bot\n"
             "Once you have your SteamID, you can link it to your Discord account using the following command:\n"
             "`/setup steamid:<your_steamid>`\n"
             "Replace `<your_steamid>` with your actual SteamID.\n\n"
-            "**3. Verifying Your Setup**\n"
+            "## 3. Verifying Your Setup\n"
             "To check if your SteamID is successfully linked, use the following command:\n"
             "`/showinfo`\n"
             "The bot will respond with your linked SteamID if everything is set up correctly.\n\n"
-            "**4. Using Other Commands**\n"
+            "## 4. Using Other Commands\n"
             "Now that your SteamID is linked, you can use other commands to get information about your Steam profile. For example:\n"
             "`/gethours` - Get total hours played across all your games.\n"
             "`/getgames` - Get the number of games you own.\n"
@@ -315,41 +370,50 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'
             "`/getuser` - Get a preview of your Steam profile.\n"
             "`/getlatestgame` - Get the icon of your latest game.\n"
             "`/getachievements` - Get the number of achievements you have unlocked.\n\n"
-            "**Need More Help?**\n"
-            "If you need further assistance, feel free to ask in the support channel or reach out to the bot developers."
+            "# Need More Help?\n"
+            "If you need further assistance, feel free to ask in the support channel or reach out to any <@&1269079923176505394>."
         )
     else:  # Spanish by default or if language is 'es'
         tutorial_text = (
-            "# ¡Bienvenido al Tutorial de Configuración del Bot de Steam!**\n\n"
-            "##1. Configuración de tu SteamID**\n"
-            "Para vincular tu cuenta de Steam con el bot, necesitarás proporcionar tu SteamID. Aquí tienes cómo hacerlo:\n"
-            "1. ##Encuentra tu SteamID:**\n"
-            "   - Si ya conoces tu SteamID, puedes omitir este paso. De lo contrario, usa uno de los siguientes métodos:\n"
-            "     - ###Método 1: Usa la herramienta de SteamID Finder disponible en línea (busca 'SteamID Finder' en tu motor de búsqueda preferido).\n"
-            "     - **Método 2:** Abre tu perfil de Steam en un navegador y mira la URL. Si la URL contiene un número largo, ese es tu SteamID. Si no, es posible que necesites usar la herramienta SteamID Finder.\n\n"
-            "**2. Vinculando tu SteamID con el Bot**\n"
-            "Una vez que tengas tu SteamID, puedes vincularlo a tu cuenta de Discord usando el siguiente comando:\n"
+            "# ¡Bienvenido al Tutorial de Configuración del Bot de Steam!\n\n"
+            "## 1. Configuración de tu SteamID\n"
+            "Para vincular tu cuenta de Steam con el bot, necesitarás proporcionar tu SteamID. Aquí te explicamos cómo hacerlo:\n"
+            "### 1. Encuentra tu SteamID:\n"
+            "###    - Si ya conoces tu SteamID, puedes saltarte este paso. De lo contrario, usa uno de los siguientes métodos:\n"
+            "    Método: Abre tu perfil de Steam en un navegador, copia la URL y pégala en `/getsteamid`. El resultado será tu SteamID.\n\n"
+            "## 2. Vincula tu SteamID con el Bot\n"
+            "Una vez que tengas tu SteamID, puedes vincularla a tu cuenta de Discord usando el siguiente comando:\n"
             "`/setup steamid:<tu_steamid>`\n"
             "Reemplaza `<tu_steamid>` con tu SteamID real.\n\n"
-            "**3. Verificando tu Configuración**\n"
-            "Para verificar si tu SteamID está vinculado correctamente, usa el siguiente comando:\n"
+            "## 3. Verifica tu Configuración\n"
+            "Para comprobar si tu SteamID se ha vinculado correctamente, usa el siguiente comando:\n"
             "`/showinfo`\n"
-            "El bot responderá con tu SteamID vinculado si todo está configurado correctamente.\n\n"
-            "**4. Usando Otros Comandos**\n"
-            "Ahora que tu SteamID está vinculado, puedes usar otros comandos para obtener información sobre tu perfil de Steam. Por ejemplo:\n"
+            "El bot responderá con tu SteamID vinculada si todo está configurado correctamente.\n\n"
+            "## 4. Usar Otros Comandos\n"
+            "Ahora que tu SteamID está vinculada, puedes usar otros comandos para obtener información sobre tu perfil de Steam. Por ejemplo:\n"
             "`/gethours` - Obtén el total de horas jugadas en todos tus juegos.\n"
             "`/getgames` - Obtén el número de juegos que posees.\n"
             "`/getlevel` - Obtén tu nivel de Steam.\n"
-            "`/getbadges` - Obtén el número de medallas que tienes.\n"
+            "`/getbadges` - Obtén el número de insignias que tienes.\n"
             "`/getcountry` - Obtén tu país.\n"
             "`/getuser` - Obtén una vista previa de tu perfil de Steam.\n"
-            "`/getlatestgame` - Obtén el ícono de tu juego más reciente.\n"
+            "`/getlatestgame` - Obtén el icono de tu juego más reciente.\n"
             "`/getachievements` - Obtén el número de logros que has desbloqueado.\n\n"
-            "**¿Necesitas Más Ayuda?**\n"
-            "Si necesitas más asistencia, no dudes en preguntar en el canal de soporte o contactar a los desarrolladores del bot."
+            "# ¿Necesitas más ayuda?\n"
+            "Si necesitas más asistencia, no dudes en preguntar en el canal de soporte o contactar a cualquier <@&1269079923176505394> ."
         )
-    
+
     await ctx.respond(tutorial_text)
+
+@bot.slash_command(name="embed", description="Sets up user for the use of the bot.")
+async def embed(ctx):
+    steamid = await get_steamid_from_db(str(ctx.author.id)) 
+    steamhresult = await get_steamh(steamid)
+    pic_data = await getinfo.get_pic(steamid)
+    user_name = pic_data.get('personaname')  
+    embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} has {round(steamhresult, 2)} hours.", color=discord.Color.random())
+    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+    await ctx.respond(embed=embed)
 
 
 bot.run(os.getenv("TOKEN"))
