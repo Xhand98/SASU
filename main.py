@@ -11,6 +11,7 @@ import getrequests.getinfo as getinfo
 import misc.embed as embed
 import getrequests.getgameico as getgameico
 import getrequests.getachievements as getachievements
+from steam_api import SteamAPI
 
 load_dotenv()  # Load all the variables from the env file
 bot = discord.Bot()
@@ -405,15 +406,16 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'
 
     await ctx.respond(tutorial_text)
 
-@bot.slash_command(name="embed", description="Sets up user for the use of the bot.")
-async def embed(ctx):
-    steamid = await get_steamid_from_db(str(ctx.author.id)) 
-    steamhresult = await get_steamh(steamid)
-    pic_data = await getinfo.get_pic(steamid)
-    user_name = pic_data.get('personaname')  
-    embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} has {round(steamhresult, 2)} hours.", color=discord.Color.random())
-    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-    await ctx.respond(embed=embed)
+#? @bot.slash_command(name="getinvite", description="Returns invite link for user to send")
+#? async def embed(ctx):
+#?     steamid = await get_steamid_from_db(str(ctx.author.id)) 
+#?     steamhresult = await get_steamh(steamid)
+#?     pic_data = await getinfo.get_pic(steamid)
+#?     user_name = pic_data.get('personaname')  
+#?     invlink = getinfo.get_friend_invite_token(steamid)
+#?     embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} link is: {invlink}", color=discord.Color.random())
+#?     embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+#?     await ctx.respond(embed=embed)
 
 
 bot.run(os.getenv("TOKEN"))
