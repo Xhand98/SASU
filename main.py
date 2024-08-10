@@ -16,6 +16,18 @@ from steam_api import SteamAPI
 load_dotenv()  # Load all the variables from the env file
 bot = discord.Bot()
 
+async def check_user(steamid, ctx):
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+    steamid = await process_user_or_steamid(steamid)
+    return steamid
+
+async def user_info(steamid):
+    pic_data = await getinfo.get_pic(steamid)
+    user_name = pic_data.get('personaname')
+    return user_name
+    
+
 async def get_steamh(res):
     try:
         return await getinfo.get_hours(res)
@@ -47,14 +59,11 @@ async def on_ready():
 @bot.slash_command(name="gethours", description="Get hours of a Steam user across all its games.")
 async def gethours_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         hours = await get_steamh(steamid)
         if hours:
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')  
+            user_name = await user_info(steamid) 
             embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} has {round(hours, 2)} hours.", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
@@ -69,18 +78,15 @@ async def gethours_command(ctx: discord.ApplicationContext, *, steamid: str = No
 async def getsteamid_command(ctx: discord.ApplicationContext, *, steamurl: str = None):
     await ctx.defer()
     
-    # If no URL is provided, try to retrieve it from the database
     if steamurl is None:
         steamurl = await get_steamid_from_db(str(ctx.author.id))
     
-    # Extract the last part of the URL using a regex pattern
     if steamurl:
         match = re.search(r"(?:https?://)?steamcommunity\.com/(?:id|profiles)/([^/]+)", steamurl)
         if match:
             steamid = match.group(1)
             steamid = await process_user_or_steamid(steamid)
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Steamid", description=f"{user_name}'s SteamID is {steamid}", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
@@ -92,14 +98,11 @@ async def getsteamid_command(ctx: discord.ApplicationContext, *, steamurl: str =
 @bot.slash_command(name="getgames", description="Get the number of all the games a user owns.")
 async def getgames_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         games = await getinfo.get_games(steamid)
         if games:
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Games", description=f"{user_name} has {games} games.", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
@@ -111,15 +114,12 @@ async def getgames_command(ctx: discord.ApplicationContext, *, steamid: str = No
 @bot.slash_command(name="getpfp", description="Get the profile picture of a user.")
 async def getpfp_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         pic_data = await getinfo.get_pic(steamid)
         if pic_data and pic_data.get('avatar'):
             avatar = pic_data["avatar"]
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name} Pfp", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             embed.set_image(url=avatar)
@@ -132,15 +132,12 @@ async def getpfp_command(ctx: discord.ApplicationContext, *, steamid: str = None
 @bot.slash_command(name="getlink", description="Get the link to a user's profile.")
 async def getlink_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         pic_data = await getinfo.get_pic(steamid)
         if pic_data and pic_data.get('profileurl'):
             url = pic_data["profileurl"]
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Link", description=f"{user_name}'s link is {url}", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
@@ -152,14 +149,11 @@ async def getlink_command(ctx: discord.ApplicationContext, *, steamid: str = Non
 @bot.slash_command(name="getlevel", description="Get the level of a user.")
 async def getlevel_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         level = await getinfo.get_level(steamid)
         if level is not None:
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Level", description=f"{user_name}'s level is {level}", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
@@ -171,14 +165,11 @@ async def getlevel_command(ctx: discord.ApplicationContext, *, steamid: str = No
 @bot.slash_command(name="getbadges", description="Get the number of badges a user has.")
 async def getbadges_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         badges = await getinfo.get_badges(steamid)
         if badges is not None:
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Badges", description=f"{user_name} has {badges} badges.", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
@@ -190,14 +181,11 @@ async def getbadges_command(ctx: discord.ApplicationContext, *, steamid: str = N
 @bot.slash_command(name="getcountry", description="Get the country of a user.")
 async def getcountry_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         country = await getinfo.get_country(steamid)
         if country:
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Country", description=f"{user_name}'s lives in {country}", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
@@ -209,9 +197,7 @@ async def getcountry_command(ctx: discord.ApplicationContext, *, steamid: str = 
 @bot.slash_command(name="getuser", description="Get a preview of a user's profile.")
 async def getuser_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         try:
             inicio = time.perf_counter()
@@ -255,14 +241,11 @@ async def getuser_command(ctx: discord.ApplicationContext, *, steamid: str = Non
 @bot.slash_command(name="getlatestgame", description="Get Latest game of a user.")
 async def getlatestgame_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
         ico = await getgameico.ejecutar(steamid)
         if ico is not None:
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Latest Game", color=discord.Color.random())
             embed.set_image(url=ico)
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
@@ -293,14 +276,12 @@ async def unixconvert_command(ctx: discord.ApplicationContext, *, timestamp: str
 @bot.slash_command(name="getachievements", description="Gets the number of achievements a player has unlocked.")
 async def getachievements_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = await check_user(steamid, ctx)
     if steamid:
+        # Call the main function to get the user's achievements.
         achievements = await getachievements.main(steamid)
         if achievements is not None:
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get('personaname')
+            user_name = await user_info(steamid)
             embed = discord.Embed(title=f"{user_name}'s Achievements", description=f"{user_name} has {achievements} achievements.", color=discord.Color.random())
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
