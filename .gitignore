@@ -166,3 +166,10 @@ cython_debug/
 *.db
 
 Dockerfile
+
+.project
+*.sql
+
+run*
+
+.vscode
