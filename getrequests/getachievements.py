@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import os
 # CONFIG
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("STEAM_API_KEY")
 
 # Helper function to fetch JSON data
 async def fetch_json(session, url):
@@ -15,7 +15,7 @@ async def fetch_json(session, url):
             raise ValueError(f"Invalid response body: {error_body}")
 
 # Get Achievements
-async def get_achievements(session, app_id, steam_id):
+async def get_achievements(session, app_id, steam_id, API_KEY):
     url = f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid={app_id}&key={API_KEY}&steamid={steam_id}"
     json_res = await fetch_json(session, url)
     return json_res
@@ -42,7 +42,7 @@ async def get_player_games(session, steam_id):
 
 # Helper function to fetch achievements for a specific game
 async def fetch_achievements_for_game(session, app_id, steam_id):
-    achievements = await get_achievements(session, app_id, steam_id)
+    achievements = await get_achievements(session, app_id, steam_id, API_KEY)
     print(f"Game {app_id}: {achievements}")  # Debugging line
     if 'playerstats' in achievements and 'achievements' in achievements['playerstats']:
         return [ac for ac in achievements['playerstats']['achievements'] if ac['achieved'] != 0]
