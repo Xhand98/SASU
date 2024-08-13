@@ -217,13 +217,13 @@ async def getuser_command(ctx: discord.ApplicationContext, *, steamid: str = Non
                 (user_name, pic_data.get('avatar')),
                 (f'Steam link: {user_link}', pic_data.get('avatar')),
                 [
-                    ('Total hours:', f'{steamhresult:.2f}' if steamhresult else 'N/A', True),
-                    ('Total games:', f'{user_games} games' if user_games else 'N/A', True),
-                    ('User level:', f'{level}' if level else 'N/A', True),
+                    ('Total hours:', f'{steamhresult:.2f}' if steamhresult else 'Private', True),
+                    ('Total games:', f'{user_games} games' if user_games else 'Private', True),
+                    ('User level:', f'{level}' if level else 'Private', True),
                     ('\u200B', '\u200B', False),
                     ('Other info', '', False, [
-                        ('User badges:', f'{badges}' if badges else 'N/A', True),
-                        ('User country:', f'{country}' if country else 'N/A', True),
+                        ('User badges:', f'{badges}' if badges else 'Private', True),
+                        ('User country:', f'{country}' if country else 'Private', True),
                         ('Achievements:', f'{achievements}', True)
                     ]),
                     ('\u200B', '\u200B', True)
