@@ -1,8 +1,9 @@
 import sqlite3
 from NewSimpleSQL import Database
+import datetime
 
 class DatabaseManager:
-    def __init__(self, db_path='steam_users.db'):
+    def __init__(self, db_path):
         self.db_path = db_path
 
     def connect(self):
@@ -12,21 +13,71 @@ class DatabaseManager:
     def close(self):
         self.db.close()
 
-    def create_table(self):
-        table_structure = {
-            "name": "users",
+    def create_tables(self):
+        table_structure1 = {
+            "name": "discord_users",
             "columns": [
+                {"name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT"},
                 {"name": "discord_id", "type": "TEXT"},
-                {"name": "steam_id", "type": "TEXT"}
-            ]
-        }
-        self.db.simple_create_table(table_structure)
+                {"name": "discord_username", "type": "TEXT"},
+                {"name": "created_at", "type": "TEXT"},  # Use TEXT for datetime
+                {"name": "updated_at", "type": "TEXT"}
+       ]
+    }
 
-    def link_steam_id(self, discord_id, steam_id):
-        self.db.simple_insert_data("users", (discord_id, steam_id))
+        table_structure2 = {
+        "name": "steam_accounts",
+        "columns": [
+            {"name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT"},
+            {"name": "discord_user_id", "type": "TEXT"},
+            {"name": "steam_id", "type": "TEXT"},
+            {"name": "steam_username", "type": "TEXT"},
+            {"name": "created_at", "type": "TEXT"},
+            {"name": "updated_at", "type": "TEXT"}
+        ]
+    }
+        self.db.simple_create_table(table_structure1)
+        self.db.simple_create_table(table_structure2)
 
+    def link_steam_id(self, discord_id: int, steam_id: str, steam_username: str, discord_username: str):
+    # Insert data into steam_accounts table
+        self.db.simple_insert_data(
+            "steam_accounts", 
+            (
+                None,  
+                discord_id,
+                steam_id,
+                steam_username,
+                str(datetime.datetime.now()),  # created_at
+                str(datetime.datetime.now())   # updated_at
+            )
+        )
+
+        # Insert data into discord_users table
+        self.db.simple_insert_data(
+            "discord_users",
+            (
+                None,
+                discord_id,
+                discord_username,
+                str(datetime.datetime.now()),  
+                str(datetime.datetime.now())   
+            )
+        )
     def get_steam_id(self, discord_id):
-        return self.db.simple_select_data("users", "steam_id", f"WHERE discord_id = '{discord_id}'", one_fetch=True)
+        tables = [
+            {
+                "name": "steam_accounts",
+                "columns": "*",
+                "conditions": f"WHERE discord_user_id = '{discord_id}'",
+                "fetch": True
+            }
+        ]
+
+        data = self.db.complicated_select_data(tables)
+
+        return data
+        ## "users", "steam_id", f"WHERE discord_id = '{discord_id}'", one_fetch=True
 
     def update_steam_info(self):
         # Placeholder para lógica de actualización periódica
