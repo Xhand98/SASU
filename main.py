@@ -12,6 +12,7 @@ import misc.embed as embed
 import getrequests.getgameico as getgameico
 import getrequests.getachievements as getachievements
 from steam_api import SteamAPI
+from dbmanager import DatabaseManager as dbm
 
 load_dotenv()  # Load all the variables from the env file
 bot = discord.Bot()
@@ -35,8 +36,8 @@ async def get_steamh(res):
         print(f"Error getting hours: {e}")
         return None
 
-async def process_user_or_steamid(user_input):
-    if user_input.isdigit() and len(user_input) == 17:
+async def process_user_or_steamid(user_input: str):
+    if str(user_input.isdigit()) and len(str(user_input)) == 17:
         return user_input  # SteamID
     else:
         try:
@@ -45,13 +46,11 @@ async def process_user_or_steamid(user_input):
             print(f"Error resolving SteamID: {e}")
             return None
 
-async def get_steamid_from_db(discord_id):
-    connect = sqlite3.connect('steam_users.db')
-    db = Database(connect)
-    result = db.simple_select_data("users", "steam_id", f"WHERE discord_id = '{discord_id}'", one_fetch=True)
-    db.close()
-    return result[0] if result else None
-
+async def get_steamid_from_db(id):
+    db = dbm(db_path='sasu_users1.db')
+    db.connect()
+    db.get_steam_id(id)
+    return db.get_steam_id(id)[0][2]
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
@@ -59,7 +58,12 @@ async def on_ready():
 @bot.slash_command(name="gethours", description="Get hours of a Steam user across all its games.")
 async def gethours_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         hours = await get_steamh(steamid)
         if hours:
@@ -79,26 +83,51 @@ async def getsteamid_command(ctx: discord.ApplicationContext, *, steamurl: str =
     await ctx.defer()
     
     if steamurl is None:
-        steamurl = await get_steamid_from_db(str(ctx.author.id))
-    
-    if steamurl:
-        match = re.search(r"(?:https?://)?steamcommunity\.com/(?:id|profiles)/([^/]+)", steamurl)
-        if match:
-            steamid = match.group(1)
-            steamid = await process_user_or_steamid(steamid)
+        # Fetch Steam ID from the database if no input is provided
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        if steamid:
             user_name = await user_info(steamid)
-            embed = discord.Embed(title=f"{user_name}'s Steamid", description=f"{user_name}'s SteamID is {steamid}", color=discord.Color.random())
+            
+            embed = discord.Embed(
+                title=f"{user_name}'s Steam ID",
+                description=f"{user_name}'s Steam ID is {steamid}",
+                color=discord.Color.random()
+            )
             embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=embed)
         else:
-            await ctx.respond(f"Invalid Steam URL. Please provide a correct Steam URL.")
+            await ctx.respond("No Steam ID found in the database for your account.")
+        return
+    
+    match = re.search(r"(?:https?://)?steamcommunity\.com/(?:id|profiles)/([^/]+)", steamurl)
+    
+    if match:
+        steamid_or_username = match.group(1)
     else:
-        await ctx.respond(f"Couldn't find Steam URL or SteamID.")
-
+        steamid_or_username = steamurl
+    
+    steamid = await process_user_or_steamid(steamid_or_username)
+    
+    user_name = await user_info(steamid)
+    
+    embed = discord.Embed(
+        title=f"{user_name}'s Steam ID",
+        description=f"{user_name}'s Steam ID is {steamid}",
+        color=discord.Color.random()
+    )
+    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+    await ctx.respond(embed=embed)
+    
+    
 @bot.slash_command(name="getgames", description="Get the number of all the games a user owns.")
 async def getgames_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx)
+
     if steamid:
         games = await getinfo.get_games(steamid)
         if games:
@@ -114,7 +143,12 @@ async def getgames_command(ctx: discord.ApplicationContext, *, steamid: str = No
 @bot.slash_command(name="getpfp", description="Get the profile picture of a user.")
 async def getpfp_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx)
+
     if steamid:
         pic_data = await getinfo.get_pic(steamid)
         if pic_data and pic_data.get('avatar'):
@@ -132,7 +166,12 @@ async def getpfp_command(ctx: discord.ApplicationContext, *, steamid: str = None
 @bot.slash_command(name="getlink", description="Get the link to a user's profile.")
 async def getlink_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         pic_data = await getinfo.get_pic(steamid)
         if pic_data and pic_data.get('profileurl'):
@@ -149,7 +188,12 @@ async def getlink_command(ctx: discord.ApplicationContext, *, steamid: str = Non
 @bot.slash_command(name="getlevel", description="Get the level of a user.")
 async def getlevel_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         level = await getinfo.get_level(steamid)
         if level is not None:
@@ -165,7 +209,12 @@ async def getlevel_command(ctx: discord.ApplicationContext, *, steamid: str = No
 @bot.slash_command(name="getbadges", description="Get the number of badges a user has.")
 async def getbadges_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         badges = await getinfo.get_badges(steamid)
         if badges is not None:
@@ -181,7 +230,12 @@ async def getbadges_command(ctx: discord.ApplicationContext, *, steamid: str = N
 @bot.slash_command(name="getcountry", description="Get the country of a user.")
 async def getcountry_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         country = await getinfo.get_country(steamid)
         if country:
@@ -197,7 +251,12 @@ async def getcountry_command(ctx: discord.ApplicationContext, *, steamid: str = 
 @bot.slash_command(name="getuser", description="Get a preview of a user's profile.")
 async def getuser_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         try:
             inicio = time.perf_counter()
@@ -241,7 +300,12 @@ async def getuser_command(ctx: discord.ApplicationContext, *, steamid: str = Non
 @bot.slash_command(name="getlatestgame", description="Get Latest game of a user.")
 async def getlatestgame_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         ico = await getgameico.ejecutar(steamid)
         if ico is not None:
@@ -276,7 +340,12 @@ async def unixconvert_command(ctx: discord.ApplicationContext, *, timestamp: str
 @bot.slash_command(name="getachievements", description="Gets the number of achievements a player has unlocked.")
 async def getachievements_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    steamid = await check_user(steamid, ctx)
+    if steamid is None:
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = await check_user(steamid, ctx)
+    else:
+        steamid = await check_user(steamid, ctx) 
+
     if steamid:
         # Call the main function to get the user's achievements.
         achievements = await getachievements.main(steamid)
@@ -293,13 +362,19 @@ async def getachievements_command(ctx: discord.ApplicationContext, *, steamid: s
 @bot.slash_command(name="setup", description="Sets up user for the use of the bot.")
 async def setup_command(ctx: discord.ApplicationContext, *, steamid: str):
     await ctx.defer()
+    steamid = int(steamid)
     steamid = await process_user_or_steamid(steamid)
     discordid = str(ctx.author.id)
+    discordname = ctx.author.name
+    pic_data = await getinfo.get_pic(steamid)
+    steam_username = pic_data.get('personaname')
     if steamid:
-        connect = sqlite3.connect('steam_users.db')
-        db = Database(connect)
-        db.simple_insert_data("users", (discordid, steamid))
-        db.close()
+        db = dbm(db_path='sasu_users1.db')
+        db.connect()
+        # db.create_tables()
+        # print(db.get_steam_id(discordid))
+        db.link_steam_id(discordid, steamid, steam_username, discordname)
+        
         await ctx.respond(f"Your SteamID {steamid} has been linked to {ctx.author}.")
     else:
         await ctx.respond(f"Invalid SteamID or user not found.")
@@ -308,7 +383,7 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str):
 async def showinfo_command(ctx: discord.ApplicationContext):
     await ctx.defer()
     discordid = str(ctx.author.id)
-    connect = sqlite3.connect('steam_users.db')
+    connect = sqlite3.connect('sasu_users.db')
     db = Database(connect)
     result = db.simple_select_data("users", "steam_id", f"WHERE discord_id = '{discordid}'", one_fetch=True)
     db.close()
