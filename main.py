@@ -83,7 +83,6 @@ async def getsteamid_command(ctx: discord.ApplicationContext, *, steamurl: str =
     await ctx.defer()
     
     if steamurl is None:
-        # Fetch Steam ID from the database if no input is provided
         steamid = await get_steamid_from_db(str(ctx.author.id))
         if steamid:
             user_name = await user_info(steamid)
@@ -347,7 +346,6 @@ async def getachievements_command(ctx: discord.ApplicationContext, *, steamid: s
         steamid = await check_user(steamid, ctx) 
 
     if steamid:
-        # Call the main function to get the user's achievements.
         achievements = await getachievements.main(steamid)
         if achievements is not None:
             user_name = await user_info(steamid)
@@ -371,8 +369,6 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str):
     if steamid:
         db = dbm(db_path='sasu_users1.db')
         db.connect()
-        # db.create_tables()
-        # print(db.get_steam_id(discordid))
         db.link_steam_id(discordid, steamid, steam_username, discordname)
         
         await ctx.respond(f"Your SteamID {steamid} has been linked to {ctx.author}.")
@@ -397,7 +393,6 @@ async def showinfo_command(ctx: discord.ApplicationContext):
 async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'):
     await ctx.defer()
     
-    # Default to Spanish if no language is specified or the language is invalid
     if language.lower() not in ['es', 'en']:
         language = 'es'
     
