@@ -36,16 +36,20 @@ async def get_games(user):
 
 async def get_pic(user):
     api_key = os.getenv('STEAM_API_KEY')
-    url = 'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/'
+    url = 'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
     params = {'key': api_key, 'steamids': user}
     
     data = await fetch_data(url, params=params)
-    player = data.get('response', {}).get('players', [{}])[0]
-    return {
-        'avatar': player.get('avatarfull'),
-        'profileurl': player.get('profileurl'),
-        'personaname': player.get('personaname')
-    }
+    players = data.get('response', {}).get('players', [])
+    if players:
+        player = players[0]
+        return {
+            'avatar': player.get('avatarfull'),
+            'profileurl': player.get('profileurl'),
+            'personaname': player.get('personaname')
+        }
+    else:
+        return None
 
 async def get_level(user):
     api_key = os.getenv('STEAM_API_KEY')
