@@ -10,7 +10,7 @@ db_path =os.path.join('db', 'sasu_users.db')
 if not os.path.exists(folderName):
     os.makedirs(folderName)
 
-connection = sqlite3.connect('./db/sasu_users.db')
+connection = sqlite3.connect('./db/example.db')
 db = Database(connection)
 
 structure1 = {
