@@ -48,8 +48,8 @@ class DatabaseManager:
                 discord_id,
                 steam_id,
                 steam_username,
-                str(datetime.datetime.now()),  # created_at
-                str(datetime.datetime.now())   # updated_at
+                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),  # created_at
+                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))   # updated_at
             )
         )
 
@@ -60,16 +60,22 @@ class DatabaseManager:
                 None,
                 discord_id,
                 discord_username,
-                str(datetime.datetime.now()),  
-                str(datetime.datetime.now())   
+                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),  
+                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))   
             )
         )
-    def get_steam_id(self, discord_id):
+    def get_steam_info(self, discord_id):
         tables = [
             {
                 "name": "steam_accounts",
                 "columns": "*",
                 "conditions": f"WHERE discord_user_id = '{discord_id}'",
+                "fetch": True
+            },
+            {
+                "name": "discord_users",
+                "columns": "*",
+                "conditions": f"WHERE discord_id = '{discord_id}'",
                 "fetch": True
             }
         ]
