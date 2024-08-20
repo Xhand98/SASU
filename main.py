@@ -13,21 +13,25 @@ import getrequests.getgameico as getgameico
 import getrequests.getachievements as getachievements
 from steam_api import SteamAPI
 from dbmanager import DatabaseManager as dbm
+import asyncio
 
-load_dotenv()  # Load all the variables from the env file
+load_dotenv() 
 bot = discord.Bot()
 
 async def check_user(steamid, ctx):
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = await process_user_or_steamid(steamid)
+    steamid = steamid[0][2]; steamid = await process_user_or_steamid(steamid)
     return steamid
 
 async def user_info(steamid):
     pic_data = await getinfo.get_pic(steamid)
-    user_name = pic_data.get('personaname')
-    return user_name
-    
+    if pic_data:  # Check if pic_data is not None
+        user_name = pic_data.get('personaname')
+        return user_name
+    else:
+        return "User not found or data is private"
+
 
 async def get_steamh(res):
     try:
@@ -37,7 +41,7 @@ async def get_steamh(res):
         return None
 
 async def process_user_or_steamid(user_input: str):
-    if str(user_input.isdigit()) and len(str(user_input)) == 17:
+    if user_input.isdigit() and len(user_input) == 17:
         return user_input  # SteamID
     else:
         try:
@@ -47,10 +51,12 @@ async def process_user_or_steamid(user_input: str):
             return None
 
 async def get_steamid_from_db(id):
-    db = dbm(db_path='sasu_users1.db')
+    db = dbm(db_path='./db/example.db')
     db.connect()
-    db.get_steam_id(id)
-    return db.get_steam_id(id)[0][2]
+    data = db.get_steam_info(id)
+    db.close()
+    return data
+  
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
@@ -58,32 +64,35 @@ async def on_ready():
 @bot.slash_command(name="gethours", description="Get hours of a Steam user across all its games.")
 async def gethours_command(ctx: discord.ApplicationContext, *, steamid: str = None):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-        steamid = await check_user(steamid, ctx)
-    else:
-        steamid = await check_user(steamid, ctx) 
-
-    if steamid:
-        hours = await get_steamh(steamid)
-        if hours:
-            user_name = await user_info(steamid) 
-            embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} has {round(hours, 2)} hours.", color=discord.Color.random())
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+    try:
+        if steamid is None:
+            steamid = await get_steamid_from_db(str(ctx.author.id))
+            steamid = await check_user(steamid, ctx)
         else:
-            await ctx.respond(f"Couldn't find hours for SteamID {steamid}.")
-    else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+            steamid = await check_user(steamid, ctx)
 
-
+        if steamid:
+            hours = await get_steamh(steamid)
+            if hours:
+                user_name = await user_info(steamid)
+                embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} has {round(hours, 2)} hours.", color=discord.Color.random())
+                embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+                await ctx.respond(embed=embed)
+            else:
+                await ctx.respond(f"Couldn't find hours for SteamID {steamid}.")
+        else:
+            await ctx.respond(f"Invalid SteamID or user not found.")
+    except Exception as e:
+        print(f"Error in gethours_command: {e}")
+        await ctx.respond("An error occurred while processing your request.")
 
 @bot.slash_command(name="getsteamid", description="Get the Steam ID of a user.")
 async def getsteamid_command(ctx: discord.ApplicationContext, *, steamurl: str = None):
     await ctx.defer()
     
     if steamurl is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
+        data = await get_steamid_from_db(str(ctx.author.id))
+        steamid = data[0][2]
         if steamid:
             user_name = await user_info(steamid)
             
@@ -360,14 +369,13 @@ async def getachievements_command(ctx: discord.ApplicationContext, *, steamid: s
 @bot.slash_command(name="setup", description="Sets up user for the use of the bot.")
 async def setup_command(ctx: discord.ApplicationContext, *, steamid: str):
     await ctx.defer()
-    steamid = int(steamid)
     steamid = await process_user_or_steamid(steamid)
     discordid = str(ctx.author.id)
     discordname = ctx.author.name
     pic_data = await getinfo.get_pic(steamid)
     steam_username = pic_data.get('personaname')
     if steamid:
-        db = dbm(db_path='sasu_users1.db')
+        db = dbm(db_path='./db/example.db')
         db.connect()
         db.link_steam_id(discordid, steamid, steam_username, discordname)
         
@@ -378,16 +386,38 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str):
 @bot.slash_command(name="showinfo", description="Shows information for the user.")
 async def showinfo_command(ctx: discord.ApplicationContext):
     await ctx.defer()
-    discordid = str(ctx.author.id)
-    connect = sqlite3.connect('sasu_users.db')
-    db = Database(connect)
-    result = db.simple_select_data("users", "steam_id", f"WHERE discord_id = '{discordid}'", one_fetch=True)
-    db.close()
-    if result:
-        steam_id = result[0]
-        await ctx.send(f"The SteamID linked to your Discord is: {steam_id}")
-    else:
-        await ctx.send("You have not linked your Steam account with the bot.")
+    def add_true_to_data(data):
+        return [item + (True,) for item in data]
+
+    try:
+        discordid = str(ctx.author.id)
+
+        # Sample data
+        data = await get_steamid_from_db(discordid)
+        # Create embed
+        embedd = discord.Embed(title=f"{ctx.author.name}'s Stored Information", color=discord.Color.random())
+
+        if discordid:
+            embed.create_embed_tables(embedd, data, default_inline=True)
+            if embedd.fields:  # Check if embed has any fields
+                await ctx.respond(embed=embedd)
+            else:
+                await ctx.respond(content="No information available to display.")
+        else:
+            await ctx.respond(content="You have not linked your Steam account with the bot.")
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        await ctx.respond("An error occurred while processing your request.")
+        
+        
+@bot.slash_command(name="simpletest", description="Simple test command.")
+async def simpletest_command(ctx: discord.ApplicationContext):
+    await ctx.defer()
+    await asyncio.sleep(1)  # Simulate some processing delay
+    await ctx.respond("This is a test message.")
+    
+    
 
 @bot.slash_command(name="tutorial", description="Guide on how to set up your Steam account with the bot.")
 async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'):
