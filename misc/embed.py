@@ -1,7 +1,7 @@
 import discord
 import datetime
 
-def create_embed(em_title: str, em_description: str, em_color: discord.Color.red, author: tuple = None, footer: tuple = None, tables: list = None, image: str = None, thumbnail: str = None, em_timestamp: datetime.datetime = None):
+def create_embed(em_title: str, em_description: str, em_color: discord.Color.red, author: tuple = None, footer: tuple = None, tables: list = None, image: str = None, thumbnail: str = None, em_timestamp: datetime.datetime = None): 
     Embed: discord.Embed = discord.Embed(
         title=em_title,
         description=em_description,
@@ -42,13 +42,21 @@ def create_embed(em_title: str, em_description: str, em_color: discord.Color.red
 
     return Embed
 
-def create_embed_tables(embed: discord.Embed, tables: list):
+def create_embed_tables(embed: discord.Embed, tables: list, default_inline=True):
     try:
-        for obj in tables:  # Espaciado entre columnas
-            embed.add_field(name=obj[0], value=obj[1], inline=obj[2])
+        if not tables:
+            print("No data to add to the embed.")
+            embed.add_field(name='No Data', value='No information available.', inline=False)
+            return
 
-            if len(obj) > 3:
-                create_embed_tables(embed, obj[3])
+        for obj in tables:
+            if len(obj) == 6 and isinstance(obj[5], str):  # Handles case where the last element is a timestamp
+                embed.add_field(name=f"Steam Info", value=f"ID: {obj[0]}\nSteam ID: {obj[1]}\nUser: {obj[3]}\nCreated: {obj[4]}\nUpdated: {obj[5]}", inline=default_inline)
+            elif len(obj) == 5:
+                embed.add_field(name=f"Discord Info: {obj[0]}", value=f"ID: {obj[0]}\nDiscord ID: {obj[1]}\nUser: {obj[2]}\nCreated: {obj[3]}\nUpdated: {obj[4]}", inline=default_inline)
+            else:
+                print(f'Unexpected data format: {obj}')
+
     except (ValueError, IndexError, TypeError) as error:
-        print('An error occurred while adding the tables')
-        embed.add_field(name='Create Table Error', value=error, inline=False)
+        print(f'An error occurred while adding the tables: {error}')
+        embed.add_field(name='Create Table Error', value=str(error), inline=False)
