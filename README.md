@@ -2,18 +2,21 @@
 
 ## Table of Contents
 
-- [About](#about)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Commands](#commands)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+- [Discord Bot](#discord-bot)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Example Commands](#example-commands)
+  - [Commands](#commands)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
 
 ## About
 
-This is a Python-based Discord bot designed to [briefly describe the bot's purpose, e.g., manage a Discord server, interact with external APIs, provide entertainment, etc.]. The bot is built using the `discord.py` library and includes various features to enhance your Discord server experience.
+This is a Python-based Discord bot designed to let users manage some aspects of steam from their discord server/discord dm's. The bot is built using the `pycord` library and includes various features to enhance your Discord server experience.
 
 ## Features
 
@@ -27,33 +30,34 @@ This is a Python-based Discord bot designed to [briefly describe the bot's purpo
 To install and run the bot, follow these steps:
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
-    ```
 
+   ```bash
+   git clone https://github.com/Xhand98/SASU.git
+   cd your-repo-name
+   ```
 2. Create a virtual environment and activate it:
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
 
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 3. Install the required dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
 
+   ```bash
+   pip install -r requirements.txt
+   ```
 4. Set up environment variables:
-    - Create a `.env` file in the project root and add the following variables:
-      ```plaintext
-      DISCORD_TOKEN=your-discord-bot-token
-      STEAM_API_KEY=your-steam-api-key
-      ```
 
+   - Create a `.env` file in the project root and add the following variables:
+     ```plaintext
+     DISCORD_TOKEN=your-discord-bot-token
+     STEAM_API_KEY=your-steam-api-key
+     ```
 5. Run the bot:
-    ```bash
-    python bot.py
-    ```
+
+   ```bash
+   python bot.py
+   ```
 
 ## Usage
 
@@ -90,7 +94,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For questions, feedback, or suggestions, feel free to contact me at [your-email@example.com](mailto:your-email@example.com).
+For questions, feedback, or suggestions, feel free to contact me at [hendrickherrera9@gmail.com](mailto:hendrickherrera9@gmail.com).
 
 ---
 
