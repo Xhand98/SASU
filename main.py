@@ -1,4 +1,3 @@
-import sqlite3
 import re
 from NewSimpleSQL import Database
 import discord
@@ -12,7 +11,7 @@ import misc.embed as embed
 import getrequests.getgameico as getgameico
 import getrequests.getachievements as getachievements
 from steam_api import SteamAPI
-from dbmanager import DatabaseManager as dbm
+from db.dbmanager import DatabaseManager as dbm
 import asyncio
 
 load_dotenv() 
@@ -420,11 +419,11 @@ async def simpletest_command(ctx: discord.ApplicationContext):
     
 
 @bot.slash_command(name="tutorial", description="Guide on how to set up your Steam account with the bot.")
-async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'):
+async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'en'):
     await ctx.defer()
     
     if language.lower() not in ['es', 'en']:
-        language = 'es'
+        language = 'en'
     
     if language == 'en':
         tutorial_text = (
@@ -453,7 +452,7 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'
             "`/getlatestgame` - Get the icon of your latest game.\n"
             "`/getachievements` - Get the number of achievements you have unlocked.\n\n"
             "# Need More Help?\n"
-            "If you need further assistance, feel free to ask in the support channel or reach out to any <@&1269079923176505394>."
+            "If you need further assistance, feel free to ask in the support channel or reach out to  <@&1269079923176505394>."
         )
     else:  # Spanish by default or if language is 'es'
         tutorial_text = (
@@ -484,7 +483,8 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = 'es'
             "# ¿Necesitas más ayuda?\n"
             "Si necesitas más asistencia, no dudes en preguntar en el canal de soporte o contactar a cualquier <@&1269079923176505394> ."
         )
-
+        
+        
     await ctx.respond(tutorial_text)
 
 #? @bot.slash_command(name="getinvite", description="Returns invite link for user to send")
