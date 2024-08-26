@@ -22,7 +22,7 @@ class DatabaseManager:
                 {"name": "discord_username", "type": "TEXT"},
                 {"name": "created_at", "type": "TEXT"},  # Use TEXT for datetime
                 {"name": "updated_at", "type": "TEXT"}
-       ]
+        ]
     }
 
         table_structure2 = {
