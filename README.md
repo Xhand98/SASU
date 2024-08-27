@@ -1,5 +1,7 @@
 # Discord Bot
+
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 ## Table of Contents
 
 - [Discord Bot](#discord-bot)
@@ -65,8 +67,8 @@ Once the bot is running, invite it to your Discord server using the OAuth2 URL g
 
 ### Example Commands
 
-- `/command1`: Description of what command1 does.
-- `/command2 [arg]`: Description of what command2 does with an argument.
+- `/setup`: Gets the bot ready for the user to use without passing a steamid.
+- `/gethours [steamid]`: Shows the total hours of an user in steam (across all their games).
 
 ## Commands
 
