@@ -585,17 +585,4 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"
 
     await ctx.respond(tutorial_text)
 
-
-# ? @bot.slash_command(name="getinvite", description="Returns invite link for user to send")
-# ? async def embed(ctx):
-# ?     steamid = await get_steamid_from_db(str(ctx.author.id))
-# ?     steamhresult = await get_steamh(steamid)
-# ?     pic_data = await getinfo.get_pic(steamid)
-# ?     user_name = pic_data.get('personaname')
-# ?     invlink = getinfo.get_friend_invite_token(steamid)
-# ?     embed = discord.Embed(title=f"{user_name}'s Hours", description=f"{user_name} link is: {invlink}", color=discord.Color.random())
-# ?     embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-# ?     await ctx.respond(embed=embed)
-
-
 bot.run(os.getenv("TOKEN"))
