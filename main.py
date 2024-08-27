@@ -1,7 +1,5 @@
 import re
-from NewSimpleSQL import Database
 import discord
-from discord.ext import commands
 import os
 from dotenv import load_dotenv
 import time
@@ -10,7 +8,6 @@ import getrequests.getinfo as getinfo
 import misc.embed as embed
 import getrequests.getgameico as getgameico
 import getrequests.getachievements as getachievements
-from steam_api import SteamAPI
 from db.dbmanager import DatabaseManager as dbm
 import asyncio
 
