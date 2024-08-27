@@ -2,9 +2,7 @@
 name = "SteamAchievemetsShowUp"
 version = "0.1.0"
 description = "A Discord bot that interacts with Steam API to retrieve and display user information."
-authors = {
-    name="Xhand", email="hendrickherrera9@gmail.com" 
-}
+authors = { name="Xhand", email="hendrickherrera9@gmail.com" }
 license = "MIT"
 
 [tool.poetry.dependencies]
