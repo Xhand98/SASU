@@ -1,4 +1,4 @@
-# Discord Bot
+# SASU - Discord Bot
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -67,7 +67,7 @@ Once the bot is running, invite it to your Discord server using the OAuth2 URL g
 
 ### Example Commands
 
-- `/setup`: Gets the bot ready for the user to use without passing a steamid.
+- `/setup`: Gets the bot ready for the user to use without .
 - `/gethours [steamid]`: Shows the total hours of an user in steam (across all their games).
 
 ## Commands
