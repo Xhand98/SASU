@@ -1,5 +1,5 @@
 # Discord Bot
-
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ## Table of Contents
 
 - [Discord Bot](#discord-bot)
@@ -32,7 +32,7 @@ To install and run the bot, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Xhand98/SASU.git
+   git clone https://github.com/Xhand98/SASU .git
    cd your-repo-name
    ```
 2. Create a virtual environment and activate it:
