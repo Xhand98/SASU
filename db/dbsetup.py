@@ -3,7 +3,7 @@ import sqlite3
 from NewSimpleSQL import Database
 
 
-connection = sqlite3.connect('./example.db')
+connection = sqlite3.connect('./sasu_users.db')
 db = Database(connection)
 
 structure1 = {
