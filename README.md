@@ -4,7 +4,7 @@
 
 ## Table of Contents
 
-- [Discord Bot](#discord-bot)
+- [SASU - Discord Bot](#sasu---discord-bot)
   - [Table of Contents](#table-of-contents)
   - [About](#about)
   - [Features](#features)
