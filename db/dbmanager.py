@@ -1,6 +1,7 @@
 import sqlite3
-from NewSimpleSQL import Database
+from NewSimpleSQL.SimpleSQLite import Database, ID
 import datetime
+
 
 class DatabaseManager:
     def __init__(self, db_path):
@@ -12,34 +13,73 @@ class DatabaseManager:
     
     def close(self):
         self.db.close()
+        
+    def get_discord(self):
+        self.db.simple_select_data("discord_users", "*")
 
     def create_tables(self):
-        table_structure1 = {
+        structure1 = {
             "name": "discord_users",
-            "columns": [
-                {"name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                {"name": "discord_id", "type": "TEXT"},
-                {"name": "discord_username", "type": "TEXT"},
-                {"name": "created_at", "type": "TEXT"},  # Use TEXT for datetime
-                {"name": "updated_at", "type": "TEXT"}
-        ]
-    }
+            "columns" : {
+                "id" : ID(),
+                "discord_id" : {
+                    "type": str,
+                    "constraints" : "NOT NULL"
+                },
+                "discord_username" : {
+                    "type": str,
+                    "constraints" : "NOT NULL"
+                },
+                "created_at" : str,
+                "updated_at" : str
+            }
+        }
+        structure2 = {
+            "name": "steam_accounts",
+            "columns": {
+                "id" : ID(),
+                "discord_user_id": {
+                    "type": int,
+                    "constraints": "NOT NULL"
+                },
+                "steam_id": {
+                    "type": int,
+                    "constraints": "NOT NULL"
+                },
+                "steam_username": {
+                    "type": str,
+                    "constraints": "NOT NULL"
+                },
+                "created_at": str,
+                "updated_at": str
+            },
+            "fk": [
+                {
+                    "column": "discord_user_id",
+                    "references": ["discord_users", "discord_id"]
+                }
+            ]
+        }    
+        structure3 = {
+            "name": "blacklist",
+            "columns": {
+                "id" : ID(),
+                "discord_id" : {
+                    "type": str,
+                    "constraints": "NOT NULL"
+                }
+            },
+            "fk" : [
+                {
+                    "column" : "discord_id",
+                    "references" : ["discord_users", "discord_id"]
+                }
+            ]
+        }
+        
+        self.db.complicated_create_tables([structure1, structure2, structure3])
 
-        table_structure2 = {
-        "name": "steam_accounts",
-        "columns": [
-            {"name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT"},
-            {"name": "discord_user_id", "type": "TEXT"},
-            {"name": "steam_id", "type": "TEXT"},
-            {"name": "steam_username", "type": "TEXT"},
-            {"name": "created_at", "type": "TEXT"},
-            {"name": "updated_at", "type": "TEXT"}
-        ]
-    }
-        self.db.simple_create_table(table_structure1)
-        self.db.simple_create_table(table_structure2)
-
-    def link_steam_id(self, discord_id: int, steam_id: str, steam_username: str, discord_username: str):
+    def link_steam_id(self, discord_id: int, steam_id: int, steam_username: str, discord_username: str):
     # Insert data into steam_accounts table
         self.db.simple_insert_data(
             "steam_accounts", 
@@ -85,13 +125,33 @@ class DatabaseManager:
         return data
         ## "users", "steam_id", f"WHERE discord_id = '{discord_id}'", one_fetch=True
 
-    def update_steam_info(self):
-        # Placeholder para lógica de actualización periódica
-        users = self.db.simple_select_data("users", "*")
-        for user in users:
-            discord_id, steam_id = user
-            print(f"Actualizando información para Steam ID: {steam_id}")
+    # def update_steam_info(self):
+    #     # Placeholder para lógica de actualización periódica
+    #     users = self.db.simple_select_data("users", "*")
+    #     for user in users:
+    #         discord_id, steam_id = user
+    #         print(f"Actualizando información para Steam ID: {steam_id}")
     
+    def ban(self, discord_id: int):
+        self.db.simple_insert_data(
+            "blacklist",
+            (
+            None,
+            discord_id,)
+            )
+        
+    def isbanned(self, discord_id: int):
+        if self.db.simple_select_data("blacklist", "*", f"WHERE discord_id = '{discord_id}'"):
+            return "Its banned"
+        else:
+            return "Its not banned"
+        
+    def unban(self, discord_id: int):
+        self.db.simple_delete_data(
+            "blacklist",
+            f"WHERE discord_id = '{discord_id}'"
+        )
+        return "User is now unbanned"
     def run_custom_query(self, query):
         self.db.custom_execute(query)
 
