@@ -175,3 +175,6 @@ Dockerfile
 run*
 
 .vscode
+
+last_sasu_users.db
+users.db
