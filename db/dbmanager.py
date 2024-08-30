@@ -65,7 +65,6 @@ class DatabaseManager:
         self.db.simple_insert_data(
             "steam_accounts",
             (
-                None,
                 discord_id,
                 steam_id,
                 steam_username,
@@ -82,7 +81,6 @@ class DatabaseManager:
         self.db.simple_insert_data(
             "discord_users",
             (
-                None,
                 discord_id,
                 discord_username,
                 str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
@@ -122,14 +120,14 @@ class DatabaseManager:
         self.db.simple_insert_data(
             "blacklist",
             (
-                None,
                 discord_id,
+                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             ),
         )
 
     def isbanned(self, discord_id: int):
         if self.db.simple_select_data(
-            "blacklist", "*", f"WHERE discord_id = '{discord_id}'"
+            "blacklist", "discord_id", f"WHERE discord_id = '{discord_id}'"
         ):
             return True
         else:

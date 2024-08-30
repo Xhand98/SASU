@@ -9,8 +9,7 @@ db = Database(connection)
 structure1 = {
     "name": "discord_users",
     "columns": {
-        "id": ID(),
-        "discord_id": {"type": str, "constraints": "NOT NULL"},
+        "discord_id": ID(auto_increment=False),
         "discord_username": {"type": str, "constraints": "NOT NULL"},
         "created_at": str,
         "updated_at": str,
@@ -19,9 +18,8 @@ structure1 = {
 structure2 = {
     "name": "steam_accounts",
     "columns": {
-        "id": ID(),
+        "steam_id": ID(auto_increment=False),
         "discord_user_id": {"type": int, "constraints": "NOT NULL"},
-        "steam_id": {"type": int, "constraints": "NOT NULL"},
         "steam_username": {"type": str, "constraints": "NOT NULL"},
         "created_at": str,
         "updated_at": str,
@@ -30,7 +28,10 @@ structure2 = {
 }
 structure3 = {
     "name": "blacklist",
-    "columns": {"id": ID(), "discord_id": {"type": str, "constraints": "NOT NULL"}},
+    "columns": {
+                "discord_id": ID(auto_increment=False),
+                "banned_at": str,
+                },
     "fk": {"discord_id": ("discord_users", "discord_id")},
 }
 
