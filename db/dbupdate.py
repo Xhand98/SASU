@@ -3,9 +3,10 @@ import time
 import sqlite3
 from NewSimpleSQL import Database
 
+
 def update_user_info():
     while True:
-        connection = sqlite3.connect('steam_user.db')
+        connection = sqlite3.connect("steam_user.db")
         db = Database(connection)
 
         users = db.simple_select_data("users", "*")
@@ -13,7 +14,7 @@ def update_user_info():
         for user in users:
             discord_id, steam_id = user
 
-            print(f'actualizando informacion para el steam id: {steam_id}')
+            print(f"actualizando informacion para el steam id: {steam_id}")
 
         db.close()
         time.sleep(30)
