@@ -58,7 +58,7 @@ To install and run the bot, follow these steps:
 5. Run the bot:
 
    ```bash
-   python bot.py
+   python main.py
    ```
 
 ## Usage
