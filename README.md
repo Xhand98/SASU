@@ -10,6 +10,7 @@
   - [About](#about)
   - [Features](#features)
   - [Installation](#installation)
+    - [DB Setup](#dbsetup)
   - [Usage](#usage)
     - [Example Commands](#example-commands)
   - [Commands](#commands)
@@ -61,6 +62,17 @@ To install and run the bot, follow these steps:
    ```bash
    python main.py
    ```
+
+## Database Setup
+
+To setup the database to make the bot work, follow this steps:
+
+1. Run the dbsetup file:
+   ``` command line
+   python ./db/dbsetup.py
+   ```
+
+2. And that's it, go use your favorite database query tool and check it out!
 
 ## Usage
 
