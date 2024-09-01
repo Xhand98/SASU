@@ -11,6 +11,7 @@
   - [Features](#features)
   - [Installation](#installation)
     - [DB Setup](#dbsetup)
+    - [DB Details](#dbdetails)
   - [Usage](#usage)
     - [Example Commands](#example-commands)
   - [Commands](#commands)
@@ -73,6 +74,11 @@ To setup the database to make the bot work, follow this steps:
    ```
 
 2. And that's it, go use your favorite database query tool and check it out!
+
+## DbDetails
+
+The databse engine used is SQLite, managed by a private library (dbmanager), also managed by library [NewSimpleSQL](https://github.com/Greem3/NewSimpleSQL)
+
 
 ## Usage
 
