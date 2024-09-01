@@ -79,7 +79,8 @@ To setup the database to make the bot work, follow this steps:
 
 The databse engine used is SQLite, managed by a private library (dbmanager), also managed by library [NewSimpleSQL](https://github.com/Greem3/NewSimpleSQL)
 
-This is the database diagram: ![database ddl diagram](https://github.com/user-attachments/assets/a3301ac7-387d-434f-afa0-29673b2e773c)
+This is the database diagram:
+![database ddl diagram](https://github.com/user-attachments/assets/67dba3b1-10e3-4c7b-a5bf-ca7b641af83b)
 
 
 ## Usage
