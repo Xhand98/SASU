@@ -63,7 +63,7 @@ To install and run the bot, follow these steps:
    python main.py
    ```
 
-## Database Setup
+## DbSetup
 
 To setup the database to make the bot work, follow this steps:
 
