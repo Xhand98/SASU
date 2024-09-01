@@ -65,8 +65,8 @@ class DatabaseManager:
         self.db.simple_insert_data(
             "steam_accounts",
             (
-                discord_id,
                 steam_id,
+                discord_id,
                 steam_username,
                 str(
                     datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -107,14 +107,6 @@ class DatabaseManager:
         data = self.db.complicated_select_data(tables)
 
         return data
-        ## "users", "steam_id", f"WHERE discord_id = '{discord_id}'", one_fetch=True
-
-    # def update_steam_info(self):
-    #     # Placeholder para lógica de actualización periódica
-    #     users = self.db.simple_select_data("users", "*")
-    #     for user in users:
-    #         discord_id, steam_id = user
-    #         print(f"Actualizando información para Steam ID: {steam_id}")
 
     def ban(self, discord_id: int):
         self.db.simple_insert_data(
