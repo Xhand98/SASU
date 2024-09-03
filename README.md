@@ -80,7 +80,7 @@ To setup the database to make the bot work, follow this steps:
 The databse engine used is SQLite, managed by a private library (dbmanager), also managed by library [NewSimpleSQL](https://github.com/Greem3/NewSimpleSQL)
 
 This is the database diagram:<br/><br/>
-![database ddl diagram](https://github.com/user-attachments/assets/67dba3b1-10e3-4c7b-a5bf-ca7b641af83b)
+![database ddl diagram](https://github.com/Xhand98/SASU/blob/25fb31d06f1d2717c865556606d5e1090284ab59/db/assets/diagram.svg)
 
 
 ## Usage
@@ -99,8 +99,6 @@ Here’s a list of available commands:
 - **/steamprofile [steamid]**: Fetches and displays the Steam profile of a user based on their SteamID.
 - **/gameinfo [game]**: Provides detailed information about a specific game from Steam.
 - **/topgames**: Lists the top games currently trending on Steam.
-
-*(Add more commands as needed.)*
 
 ## Contributing
 
