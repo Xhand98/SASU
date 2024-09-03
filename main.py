@@ -927,5 +927,33 @@ async def sasuunban_command(ctx: discord.ApplicationContext, discordid):
     except Exception as e:
         await ctx.respond(f"An error ocurred: {e}")
 
+@bot.slash_command(name="sasubackup", description="Backs up database.")
+async def sasuunban_command(ctx: discord.ApplicationContext):
+
+    if not await is_authorized(ctx.author):
+        await ctx.respond("You are not allowed to use this command.")
+        return
+
+    """
+    Unban a user from using the bot.
+
+    Args:
+        ctx: The slash command context.
+        discordid: The Discord ID of the user to unban.
+
+    Returns:
+        A message indicating whether the user was unbanned or not.
+    """
+    try:
+        await ctx.defer()
+        db = dbm(db_path="db/users.db")
+        db.connect()
+        db.backup_database()
+        db.close()
+        await ctx.respond(f"The database has been backed up!")
+    except Exception as e:
+        await ctx.respond(f"An error ocurred: {e}")
+
+
 
 bot.run(os.getenv("TOKEN"))

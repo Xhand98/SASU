@@ -181,3 +181,5 @@ users.db
 
 old db's/
 backups/
+
+*backup*.db
