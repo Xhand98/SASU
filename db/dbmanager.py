@@ -131,3 +131,36 @@ class DatabaseManager:
 
     def run_custom_query(self, query):
         self.db.custom_execute(query)
+
+    def update_user_info(discord_id, new_username, new_value_for_another_column):
+        try:
+            # Establish a new database connection for this thread
+            connection = sqlite3.connect("./db/users.db")
+            db = Database(connection)
+            
+            # Prepare the update statement with multiple columns
+            update_query = """
+            UPDATE discord_users
+            SET discord_username = ?, updated_at = ?
+            WHERE discord_id = ?
+            """
+            
+            # Execute the update
+            db.custom_execute(update_query, new_username, new_value_for_another_column, discord_id)
+            
+            # Verify the update
+            users = db.simple_select_data(
+                table="discord_users",
+                columns="discord_id, discord_username, updated_at",
+                conditions=f"WHERE discord_id = {discord_id}",
+                one_fetch=True
+            )
+            
+            print("Updated user:", users)
+        
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        
+        finally:
+            db.commit()     
+            db.close()
