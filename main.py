@@ -21,14 +21,17 @@ def normalize_data(data):
     """Ensures all tuples have the same number of elements by adding placeholders if necessary."""
     max_length = max(len(item) for item in data)
     normalized_data = [
-        item + ("placeholder",) * (max_length - len(item)) if len(item) < max_length else item
+        (
+            item + ("placeholder",) * (max_length - len(item))
+            if len(item) < max_length
+            else item
+        )
         for item in data
     ]
     return normalized_data
 
 
 async def check_user(steamid, ctx: discord.ApplicationCommand):
-
     """Checks if a user has a SteamID associated with their Discord ID in the database.
 
     If the user has a SteamID associated, it returns the SteamID, otherwise it returns None.
@@ -541,32 +544,34 @@ async def getuser_command(
         embed.add_field(
             name="Total Hours Played",
             value=f"{total_hours:.2f} hours" if total_hours else "Private/Unavailable",
-            inline=True
+            inline=True,
         )
         embed.add_field(
             name="Total Games Owned",
             value=f"{total_games} games" if total_games else "Private/Unavailable",
-            inline=True
+            inline=True,
         )
         embed.add_field(
             name="Steam Level",
             value=f"{user_level}" if user_level else "Private/Unavailable",
-            inline=True
+            inline=True,
         )
         embed.add_field(
             name="Badges",
             value=f"{user_badges}" if user_badges else "Private/Unavailable",
-            inline=True
+            inline=True,
         )
         embed.add_field(
             name="Country",
             value=f"{user_country}" if user_country else "Private/Unavailable",
-            inline=True
+            inline=True,
         )
         embed.add_field(
             name="Total Achievements",
-            value=f"{user_achievements}" if user_achievements else "Private/Unavailable",
-            inline=True
+            value=(
+                f"{user_achievements}" if user_achievements else "Private/Unavailable"
+            ),
+            inline=True,
         )
 
         # Send embed
@@ -578,7 +583,8 @@ async def getuser_command(
     except Exception as e:
         print(f"Error getting user info: {e}")
         await ctx.respond("An error occurred while retrieving the user's information.")
-        
+
+
 @bot.slash_command(name="getlatestgame", description="Get Latest game of a user.")
 async def getlatestgame_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
@@ -689,9 +695,7 @@ async def getachievements_command(
 
 
 @bot.slash_command(name="setup", description="Sets up user for the use of the bot.")
-async def setup_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
-):
+async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None = None):
 
     await ctx.defer()
     if steamid:
@@ -730,21 +734,21 @@ async def showinfo_command(ctx: discord.ApplicationContext):
 
     try:
         discordid = str(ctx.author.id)
-    
+
         # Sample data
         data = await get_steamid_from_db(discordid)
-        
+
         # Normalize data to ensure consistent structure
         data = normalize_data(data)
-        
+
         # Debug: Print the normalized data structure
         print(f"Normalized data: {data}")
-    
+
         embedd = discord.Embed(
             title=f"{ctx.author.name}'s Stored Information",
             color=discord.Color.random(),
         )
-    
+
         if discordid:
             embed.create_embed_tables(embedd, data, default_inline=True)
             if embedd.fields:  # Check if embed has any fields
@@ -759,8 +763,6 @@ async def showinfo_command(ctx: discord.ApplicationContext):
     except Exception as e:
         print(f"An error occurred: {e}")
         await ctx.respond("An error occurred while processing your request.")
-
-
 
 
 @bot.slash_command(name="simpletest", description="Simple test command.")
@@ -927,6 +929,7 @@ async def sasuunban_command(ctx: discord.ApplicationContext, discordid):
     except Exception as e:
         await ctx.respond(f"An error ocurred: {e}")
 
+
 @bot.slash_command(name="sasubackup", description="Backs up database.")
 async def sasuunban_command(ctx: discord.ApplicationContext):
 
@@ -953,7 +956,6 @@ async def sasuunban_command(ctx: discord.ApplicationContext):
         await ctx.respond(f"The database has been backed up!")
     except Exception as e:
         await ctx.respond(f"An error ocurred: {e}")
-
 
 
 bot.run(os.getenv("TOKEN"))

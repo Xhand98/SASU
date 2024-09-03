@@ -113,10 +113,7 @@ class DatabaseManager:
     def ban(self, discord_id: int):
         self.db.simple_insert_data(
             "blacklist",
-            (
-                discord_id,
-                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            ),
+            (discord_id, str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))),
         )
 
     def isbanned(self, discord_id: int):
@@ -139,41 +136,43 @@ class DatabaseManager:
             # Establish a new database connection for this thread
             connection = sqlite3.connect("./db/users.db")
             db = Database(connection)
-            
+
             # Prepare the update statement with multiple columns
             update_query = """
             UPDATE discord_users
             SET discord_username = ?, updated_at = ?
             WHERE discord_id = ?
             """
-            
+
             # Execute the update
-            db.custom_execute(update_query, new_username, new_value_for_another_column, discord_id)
-            
+            db.custom_execute(
+                update_query, new_username, new_value_for_another_column, discord_id
+            )
+
             # Verify the update
             users = db.simple_select_data(
                 table="discord_users",
                 columns="discord_id, discord_username, updated_at",
                 conditions=f"WHERE discord_id = {discord_id}",
-                one_fetch=True
+                one_fetch=True,
             )
-            
+
             print("Updated user:", users)
-        
+
         except Exception as e:
             print(f"An error occurred: {e}")
-        
+
         finally:
-            db.commit()     
+            db.commit()
             db.close()
-            
+
     def backup_database(self):
         file = self.db_path
 
         time = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        backup_dir = './db/backup'
-        changed_name = os.path.join(backup_dir, f'{time}_backup.db')
+        backup_dir = "./db/backup"
+        changed_name = os.path.join(backup_dir, f"{time}_backup.db")
 
         shutil.copy(file, changed_name)
 

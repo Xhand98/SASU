@@ -29,9 +29,9 @@ structure2 = {
 structure3 = {
     "name": "blacklist",
     "columns": {
-                "discord_id": ID(auto_increment=False),
-                "banned_at": str,
-                },
+        "discord_id": ID(auto_increment=False),
+        "banned_at": str,
+    },
     "fk": {"discord_id": ("discord_users", "discord_id")},
 }
 
