@@ -1,6 +1,8 @@
 import sqlite3
 from NewSimpleSQL.SimpleSQLite import Database, ID
-import datetime
+from datetime import datetime
+import shutil
+import os
 
 
 class DatabaseManager:
@@ -164,3 +166,15 @@ class DatabaseManager:
         finally:
             db.commit()     
             db.close()
+            
+    def backup_database(self):
+        file = self.db_path
+
+        time = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        backup_dir = './db/backup'
+        changed_name = os.path.join(backup_dir, f'{time}_backup.db')
+
+        shutil.copy(file, changed_name)
+
+        print(f"Backup created: {changed_name}")
