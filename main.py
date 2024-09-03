@@ -13,17 +13,97 @@ import asyncio
 
 load_dotenv()
 bot = discord.Bot()
+AUTHORIZED_USER_IDS = [543132514848604170, 987654321012345678]
+AUTHORIZED_ROLE_IDS = [1269079923176505394, 234567890123456789]
 
 
-async def check_user(steamid, ctx):
+def normalize_data(data):
+    """Ensures all tuples have the same number of elements by adding placeholders if necessary."""
+    max_length = max(len(item) for item in data)
+    normalized_data = [
+        item + ("placeholder",) * (max_length - len(item)) if len(item) < max_length else item
+        for item in data
+    ]
+    return normalized_data
+
+
+async def check_user(steamid, ctx: discord.ApplicationCommand):
+
+    """Checks if a user has a SteamID associated with their Discord ID in the database.
+
+    If the user has a SteamID associated, it returns the SteamID, otherwise it returns None.
+
+    Parameters:
+    steamid (int | str): The SteamID to check.
+    ctx (discord.ApplicationCommand): The Discord command context.
+
+    Returns:
+    int | str | None: The SteamID if the user has one, otherwise None.
+    """
     if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
-    steamid = steamid[0][2]
+        steamid = await get_steamid_from_db(str(ctx.author.id))[0][0]
     steamid = await process_user_or_steamid(steamid)
     return steamid
 
 
+async def get_steamid_from_db(id):
+    """Gets the SteamID associated with a Discord ID from the database
+
+    Parameters
+    ----------
+    id : int
+        The Discord ID of the user to get the SteamID for
+
+    Returns
+    -------
+    list
+        A list of tuples containing the SteamID, Discord ID, and Discord username
+        of the user. If the user is not found in the database, an empty list is
+        returned.
+    """
+    db = dbm(db_path="./db/users.db")
+    db.connect()
+    data = db.get_steam_info(id)
+    db.close()
+    return data
+
+
+async def is_banned(discord_id):
+    """Checks if a user is banned from using the bot
+
+    Args:
+        discord_id (int): The Discord ID of the user
+
+    Returns:
+        bool: True if the user is banned, False otherwise
+    """
+
+    if discord_id:
+        db = dbm(db_path="./db/users.db")
+        db.connect()
+        queso = db.isbanned(discord_id)
+        db.close()
+        return queso
+
+
+async def is_authorized(user: discord.User) -> bool:
+    """Checks if the user has authorization to use the command"""
+    return user.id in AUTHORIZED_USER_IDS or any(
+        role.id in AUTHORIZED_ROLE_IDS for role in user.roles
+    )
+
+
 async def user_info(steamid):
+    """Get the username of a Steam user from their SteamID.
+
+    Args:
+        steamid: The SteamID of the user.
+
+    Returns:
+        The username of the user if the SteamID is valid,
+        otherwise "User not found or data is private".
+    """
+
     pic_data = await getinfo.get_pic(steamid)
     if pic_data:  # Check if pic_data is not None
         user_name = pic_data.get("personaname")
@@ -33,6 +113,14 @@ async def user_info(steamid):
 
 
 async def get_steamh(res):
+    """Get the total hours of a Steam user across all games.
+
+    Args:
+        res: SteamID to get the hours from.
+
+    Returns:
+        The total hours if successful, None otherwise.
+    """
     try:
         return await getinfo.get_hours(res)
     except Exception as e:
@@ -41,6 +129,15 @@ async def get_steamh(res):
 
 
 async def process_user_or_steamid(user_input: str):
+    """Process a user input to get a SteamID.
+
+    Args:
+        user_input (str): Input to process. Can be a SteamID, a username, or a URL to a Steam profile.
+
+    Returns:
+        str: SteamID, or None if an error occurred.
+    """
+
     if user_input.isdigit() and len(user_input) == 17:
         return user_input  # SteamID
     else:
@@ -51,17 +148,22 @@ async def process_user_or_steamid(user_input: str):
             return None
 
 
-async def get_steamid_from_db(id):
-    db = dbm(db_path="./db/sasu_users.db")
-    db.connect()
-    data = db.get_steam_info(id)
-    db.close()
-    return data
+async def verify_banned(ctx: discord.ApplicationContext):
+    """Check if the user is banned from using the bot before each command invocation
+
+    If the user is banned, send a message to the user and prevent the command from executing.
+    """
+
+    if await is_banned(ctx.author.id):
+        await ctx.respond("You are banned from using this bot.")
+        return
 
 
+# region ON READY
 @bot.event
 async def on_ready():
     print(f"{bot.user} is ready and online!")
+    bot.before_invoke(verify_banned)
 
 
 @bot.slash_command(
@@ -70,13 +172,24 @@ async def on_ready():
 async def gethours_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Get hours of a Steam user across all its games.
+
+    Args:
+        ctx (discord.ApplicationContext): The context of the slash command.
+        steamid (str | None): The SteamID of the user to get hours for. If None, the user linked to the Discord account will be used.
+    """
     await ctx.defer()
     try:
         if steamid is None:
             steamid = await get_steamid_from_db(str(ctx.author.id))
+            steamid = str(steamid[0][0])
             steamid = await check_user(steamid, ctx)
         else:
+            # print(steamid)
+            steamid = str(steamid)
             steamid = await check_user(steamid, ctx)
+            # print(steamid)
 
         if steamid:
             hours = await get_steamh(steamid)
@@ -94,14 +207,26 @@ async def gethours_command(
         else:
             await ctx.respond(f"Invalid SteamID or user not found.")
     except Exception as e:
-        print(f"Error in gethours_command: {e}")
-        await ctx.respond("An error occurred while processing your request.")
+        await ctx.respond(f"An error occurred while processing your request {e}.")
 
 
 @bot.slash_command(name="getsteamid", description="Get the Steam ID of a user.")
 async def getsteamid_command(
     ctx: discord.ApplicationContext, *, steamurl: str | None = None
 ):
+    """
+    Gets the Steam ID of a user, either from the database if no URL is provided
+    or from the given URL if it is a valid Steam profile URL.
+
+    Args:
+        ctx (discord.ApplicationContext): The context of the invoked command.
+        steamurl (str | None): The URL of the Steam profile to get the Steam ID of.
+            If None, the Steam ID will be retrieved from the database for the
+            user who invoked the command.
+
+    Returns:
+        None
+    """
     await ctx.defer()
 
     if steamurl is None:
@@ -149,6 +274,16 @@ async def getsteamid_command(
 async def getgames_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Get the number of all the games a user owns.
+
+    Args:
+        ctx: The interaction object.
+        steamid: The SteamID of the user to get the number of games for. If not provided, the SteamID of the user running the command is used.
+
+    Returns:
+        None
+    """
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -179,6 +314,7 @@ async def getgames_command(
 async def getpfp_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -207,6 +343,15 @@ async def getpfp_command(
 async def getlink_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Gets the link to a user's Steam profile.
+
+    Args:
+        steamid (str, optional): The SteamID of the user to get the link for. Defaults to None.
+
+    Returns:
+        discord.Embed: An embed containing the user's Steam profile link.
+    """
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -236,6 +381,17 @@ async def getlink_command(
 async def getlevel_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Gets the level of a user.
+
+    Args:
+        ctx (discord.ApplicationContext): The interaction context.
+        steamid (str | None, optional): The SteamID of the user to get the level of. Defaults to None.
+
+    Returns:
+        discord.InteractionMessage: The interaction message containing the level of the user.
+    """
+
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -264,6 +420,16 @@ async def getlevel_command(
 async def getbadges_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Gets the number of badges a user has.
+
+    Args:
+        ctx (discord.ApplicationContext): The context of the command invocation.
+        steamid (str | None, optional): The SteamID of the user. If not provided, the SteamID of the user who invoked the command is used.
+
+    Returns:
+        discord.InteractionResponse: The response to the command invocation, containing the number of badges the user has.
+    """
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -292,6 +458,16 @@ async def getbadges_command(
 async def getcountry_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Gets the country of a user.
+
+    Args:
+        ctx (discord.ApplicationContext): The interaction context.
+        steamid (str | None, optional): The SteamID of the user to get the country of. Defaults to None.
+
+    Returns:
+        discord.InteractionMessage: The interaction message containing the country of the user.
+    """
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -321,78 +497,102 @@ async def getuser_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     await ctx.defer()
-    if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))
+    try:
+        if steamid is None:
+            steamid_data = await get_steamid_from_db(str(ctx.author.id))
+            if not steamid_data:
+                await ctx.respond("No SteamID found linked to your Discord account.")
+                return
+            steamid = str(steamid_data[0][0])
+
         steamid = await check_user(steamid, ctx)
-    else:
-        steamid = await check_user(steamid, ctx)
+        if not steamid:
+            await ctx.respond("Invalid SteamID or user not found.")
+            return
 
-    if steamid:
-        try:
-            inicio = time.perf_counter()
-            steamhresult = await get_steamh(steamid)
-            user_games = await getinfo.get_games(steamid)
-            pic_data = await getinfo.get_pic(steamid)
-            user_name = pic_data.get("personaname")
-            user_link = pic_data.get("profileurl")
-            level = await getinfo.get_level(steamid)
-            badges = await getinfo.get_badges(steamid)
-            country = await getinfo.get_country(steamid)
-            achievements = await getachievements.main(steamid)
-            coso = embed.create_embed(
-                "User info",
-                "Preview of a user’s profile",
-                discord.Color.from_rgb(27, 40, 56),
-                (user_name, pic_data.get("avatar")),
-                (f"Steam link: {user_link}", pic_data.get("avatar")),
-                [
-                    (
-                        "Total hours:",
-                        f"{steamhresult:.2f}" if steamhresult else "Private",
-                        True,
-                    ),
-                    (
-                        "Total games:",
-                        f"{user_games} games" if user_games else "Private",
-                        True,
-                    ),
-                    ("User level:", f"{level}" if level else "Private", True),
-                    ("\u200B", "\u200B", False),
-                    (
-                        "Other info",
-                        "",
-                        False,
-                        [
-                            (
-                                "User badges:",
-                                f"{badges}" if badges else "Private",
-                                True,
-                            ),
-                            (
-                                "User country:",
-                                f"{country}" if country else "Private",
-                                True,
-                            ),
-                            ("Achievements:", f"{achievements}", True),
-                        ],
-                    ),
-                    ("\u200B", "\u200B", True),
-                ],
-            )
-            await ctx.respond(embed=coso)
-            final = time.perf_counter()
-            print(f"se tomo {final - inicio:.2f} segundos")
-        except Exception as e:
-            print(f"Error getting user info: {e}")
-            await ctx.respond(f"Couldn't retrieve information for SteamID {steamid}.")
-    else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        start_time = time.perf_counter()
 
+        # Fetch user data
+        total_hours = await get_steamh(steamid)
+        total_games = await getinfo.get_games(steamid)
+        user_profile = await getinfo.get_pic(steamid)
+        user_name = user_profile.get("personaname", "Unknown User")
+        user_avatar = await getinfo.get_pic(steamid)
+        user_link = await getinfo.get_pic(steamid)
+        user_level = await getinfo.get_level(steamid)
+        user_badges = await getinfo.get_badges(steamid)
+        user_country = await getinfo.get_country(steamid)
+        user_achievements = await getachievements.main(steamid)
 
+        # Create embed
+        embed = discord.Embed(
+            title=f"{user_name}'s Steam Profile",
+            description="Here's a quick overview of the user's Steam profile.",
+            color=discord.Color.random(),
+            url=user_link["profileurl"],
+        )
+
+        # Set thumbnail
+        default_avatar_url = user_avatar
+        # print(user_avatar)
+        embed.set_thumbnail(url=user_avatar["avatar"])
+
+        # Add fields
+        embed.add_field(
+            name="Total Hours Played",
+            value=f"{total_hours:.2f} hours" if total_hours else "Private/Unavailable",
+            inline=True
+        )
+        embed.add_field(
+            name="Total Games Owned",
+            value=f"{total_games} games" if total_games else "Private/Unavailable",
+            inline=True
+        )
+        embed.add_field(
+            name="Steam Level",
+            value=f"{user_level}" if user_level else "Private/Unavailable",
+            inline=True
+        )
+        embed.add_field(
+            name="Badges",
+            value=f"{user_badges}" if user_badges else "Private/Unavailable",
+            inline=True
+        )
+        embed.add_field(
+            name="Country",
+            value=f"{user_country}" if user_country else "Private/Unavailable",
+            inline=True
+        )
+        embed.add_field(
+            name="Total Achievements",
+            value=f"{user_achievements}" if user_achievements else "Private/Unavailable",
+            inline=True
+        )
+
+        # Send embed
+        await ctx.respond(embed=embed)
+
+        end_time = time.perf_counter()
+        print(f"Execution took {end_time - start_time:.2f} seconds")
+
+    except Exception as e:
+        print(f"Error getting user info: {e}")
+        await ctx.respond("An error occurred while retrieving the user's information.")
+        
 @bot.slash_command(name="getlatestgame", description="Get Latest game of a user.")
 async def getlatestgame_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Get the latest game of a user.
+
+    Args:
+        ctx (discord.ApplicationContext): The interaction context.
+        steamid (str | None, optional): The SteamID of the user. Defaults to None.
+
+    Returns:
+        discord.InteractionMessage: The response message.
+    """
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -420,6 +620,16 @@ async def getlatestgame_command(
     name="unixconvert", description="Converts a Unix date and makes it a standard one."
 )
 async def unixconvert_command(ctx: discord.ApplicationContext, *, timestamp: str):
+    """
+    Converts a Unix date and makes it a standard one.
+
+    Args:
+        ctx: The slash command context.
+        timestamp: The Unix timestamp to convert.
+
+    Returns:
+        A message with the converted date in various formats (UTC, local, ISO 8601).
+    """
     await ctx.defer()
     try:
         message = int(timestamp)
@@ -444,6 +654,16 @@ async def unixconvert_command(ctx: discord.ApplicationContext, *, timestamp: str
 async def getachievements_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """Gets the number of achievements a player has unlocked.
+
+    Args:
+        steamid (str | None): The SteamID of the user to get the achievements for.
+            If None, the SteamID linked to the user who invoked the command is used.
+
+    Returns:
+        A message with the number of achievements the user has unlocked.
+        If the user does not have a SteamID linked, a message saying so is sent.
+    """
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -469,15 +689,18 @@ async def getachievements_command(
 
 
 @bot.slash_command(name="setup", description="Sets up user for the use of the bot.")
-async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None = None):
+async def setup_command(
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
+):
+
     await ctx.defer()
     if steamid:
-        steamid = await process_user_or_steamid(steamid)
+        steamid: int = await process_user_or_steamid(steamid)
         discordid = str(ctx.author.id)
         discordname = ctx.author.name
         pic_data = await getinfo.get_pic(steamid)
         steam_username = pic_data.get("personaname")
-        db = dbm(db_path="./db/sasu_users.db")
+        db = dbm(db_path="./db/users.db")
         db.connect()
         db.link_steam_id(discordid, steamid, steam_username, discordname)
 
@@ -490,22 +713,38 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None 
 
 @bot.slash_command(name="showinfo", description="Shows information for the user.")
 async def showinfo_command(ctx: discord.ApplicationContext):
+    """Shows information for the user, such as their SteamID and whether their Steam account is linked with the bot."""
+
     await ctx.defer()
 
     def add_true_to_data(data):
+        """Adds a True at the end of each tuple in a list of tuples.
+
+        Args:
+            data (list[tuple]): A list of tuples.
+
+        Returns:
+            list[tuple]: A new list of tuples with a True added to the end of each tuple.
+        """
         return [item + (True,) for item in data]
 
     try:
         discordid = str(ctx.author.id)
-
+    
         # Sample data
         data = await get_steamid_from_db(discordid)
-        # Create embed
+        
+        # Normalize data to ensure consistent structure
+        data = normalize_data(data)
+        
+        # Debug: Print the normalized data structure
+        print(f"Normalized data: {data}")
+    
         embedd = discord.Embed(
             title=f"{ctx.author.name}'s Stored Information",
             color=discord.Color.random(),
         )
-
+    
         if discordid:
             embed.create_embed_tables(embedd, data, default_inline=True)
             if embedd.fields:  # Check if embed has any fields
@@ -522,8 +761,11 @@ async def showinfo_command(ctx: discord.ApplicationContext):
         await ctx.respond("An error occurred while processing your request.")
 
 
+
+
 @bot.slash_command(name="simpletest", description="Simple test command.")
 async def simpletest_command(ctx: discord.ApplicationContext):
+    """Simple test command that simulates some processing delay and responds with a message."""
     await ctx.defer()
     await asyncio.sleep(1)  # Simulate some processing delay
     await ctx.respond("This is a test message.")
@@ -534,6 +776,20 @@ async def simpletest_command(ctx: discord.ApplicationContext):
     description="Guide on how to set up your Steam account with the bot.",
 )
 async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"):
+    """
+    Guide on how to set up your Steam account with the bot.
+
+    This command will display a tutorial on how to set up your Steam account with the bot. The tutorial will be in English by default, but you can change the language to Spanish by using the `language` parameter.
+
+    Parameters
+    ----------
+    language : str
+        The language of the tutorial. Can be either "en" for English or "es" for Spanish. Defaults to "en" if not specified.
+
+    Returns
+    -------
+    None
+    """
     await ctx.defer()
 
     if language.lower() not in ["es", "en"]:
@@ -599,6 +855,77 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"
         )
 
     await ctx.respond(tutorial_text)
+
+
+@bot.slash_command(name="sasuban", description="Bans user from using the bot.")
+async def sasuban_command(ctx: discord.ApplicationContext, discordid):
+    """Ban a user from using the bot.
+
+    Args:
+        ctx: The slash command context.
+        discordid: The Discord ID of the user to ban.
+
+    Returns:
+        A message indicating whether the user was banned or not.
+    """
+    # if not await is_authorized(ctx.author):
+    #     await ctx.respond("You are not allowed to use this command.")
+    #     return
+
+    try:
+        await ctx.defer()
+        db = dbm(db_path="db/users.db")
+        db.connect()
+        db.ban(discordid)
+        db.close()
+        await ctx.respond(f"Banned user!")
+    except Exception as e:
+        await ctx.respond(f"An error ocurred: {e}")
+
+
+@bot.slash_command(name="isbanned", description="Check if user is banned.")
+async def isbanned_command(ctx: discord.ApplicationContext, discordid):
+    """
+    Checks if a user is banned from using the bot.
+
+    Args:
+        ctx (discord.ApplicationContext): The slash command context.
+        discordid (int): The Discord ID of the user to check.
+
+    Returns:
+        str: A message indicating whether the user is banned or not.
+    """
+    await ctx.defer()
+    queso = await is_banned(discordid)
+    await ctx.respond(queso)
+
+
+@bot.slash_command(name="sasuunban", description="Unbans user from using the bot.")
+async def sasuunban_command(ctx: discord.ApplicationContext, discordid):
+
+    # if not is_authorized(ctx.author):
+    #     await ctx.respond("You are not allowed to use this command.")
+    #     return
+
+    """
+    Unban a user from using the bot.
+
+    Args:
+        ctx: The slash command context.
+        discordid: The Discord ID of the user to unban.
+
+    Returns:
+        A message indicating whether the user was unbanned or not.
+    """
+    try:
+        await ctx.defer()
+        db = dbm(db_path="db/users.db")
+        db.connect()
+        db.unban(discordid)
+        db.close()
+        await ctx.respond(f"Unbanned user!")
+    except Exception as e:
+        await ctx.respond(f"An error ocurred: {e}")
 
 
 bot.run(os.getenv("TOKEN"))
