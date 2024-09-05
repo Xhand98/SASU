@@ -71,10 +71,10 @@ class DatabaseManager:
                 discord_id,
                 steam_username,
                 str(
-                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 ),  # created_at
                 str(
-                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 ),  # updated_at
             ),
         )
@@ -85,8 +85,8 @@ class DatabaseManager:
             (
                 discord_id,
                 discord_username,
-                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-                str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
             ),
         )
 
@@ -113,7 +113,7 @@ class DatabaseManager:
     def ban(self, discord_id: int):
         self.db.simple_insert_data(
             "blacklist",
-            (discord_id, str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))),
+            (discord_id, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))),
         )
 
     def isbanned(self, discord_id: int):
