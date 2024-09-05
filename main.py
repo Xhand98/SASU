@@ -870,9 +870,9 @@ async def sasuban_command(ctx: discord.ApplicationContext, discordid):
     Returns:
         A message indicating whether the user was banned or not.
     """
-    # if not await is_authorized(ctx.author):
-    #     await ctx.respond("You are not allowed to use this command.")
-    #     return
+    if not await is_authorized(ctx.author):
+        await ctx.respond("You are not allowed to use this command.")
+        return
 
     try:
         await ctx.defer()
