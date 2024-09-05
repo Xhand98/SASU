@@ -145,9 +145,7 @@ class DatabaseManager:
             """
 
             # Execute the update
-            db.custom_execute(
-                update_query, new_username, date, discord_id
-            )
+            db.custom_execute(update_query, new_username, date, discord_id)
 
             # Verify the update
             users = db.simple_select_data(
