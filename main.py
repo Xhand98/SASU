@@ -860,7 +860,7 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"
 
 
 @bot.slash_command(name="sasuban", description="Bans user from using the bot.")
-async def sasuban_command(ctx: discord.ApplicationContext, discordid):
+async def sasuban_command(ctx: discord.ApplicationContext, member: discord.Member):
     """Ban a user from using the bot.
 
     Args:
@@ -878,7 +878,7 @@ async def sasuban_command(ctx: discord.ApplicationContext, discordid):
         await ctx.defer()
         db = dbm(db_path="db/users.db")
         db.connect()
-        db.ban(discordid)
+        db.ban(member.id)
         db.close()
         await ctx.respond(f"Banned user!")
     except Exception as e:
@@ -886,7 +886,7 @@ async def sasuban_command(ctx: discord.ApplicationContext, discordid):
 
 
 @bot.slash_command(name="isbanned", description="Check if user is banned.")
-async def isbanned_command(ctx: discord.ApplicationContext, discordid):
+async def isbanned_command(ctx: discord.ApplicationContext, member: discord.Member):
     """
     Checks if a user is banned from using the bot.
 
@@ -898,12 +898,12 @@ async def isbanned_command(ctx: discord.ApplicationContext, discordid):
         str: A message indicating whether the user is banned or not.
     """
     await ctx.defer()
-    queso = await is_banned(discordid)
-    await ctx.respond(queso)
+    banned = await is_banned(member.id)
+    await ctx.respond(banned)
 
 
 @bot.slash_command(name="sasuunban", description="Unbans user from using the bot.")
-async def sasuunban_command(ctx: discord.ApplicationContext, discordid):
+async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Member):
 
     # if not is_authorized(ctx.author):
     #     await ctx.respond("You are not allowed to use this command.")
@@ -923,7 +923,7 @@ async def sasuunban_command(ctx: discord.ApplicationContext, discordid):
         await ctx.defer()
         db = dbm(db_path="db/users.db")
         db.connect()
-        db.unban(discordid)
+        db.unban(member.id)
         db.close()
         await ctx.respond(f"Unbanned user!")
     except Exception as e:
