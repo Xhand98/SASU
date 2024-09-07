@@ -18,8 +18,10 @@ AUTHORIZED_USER_IDS = [543132514848604170, 987654321012345678]
 
 
 def normalize_data(data):
-    """Ensures all tuples have the same number
-    of elements by adding placeholders if necessary."""
+    """
+    Ensures all tuples have the same number
+    of elements by adding placeholders if necessary.\
+    """
     max_length = max(len(item) for item in data)
     normalized_data = [
         (
@@ -699,9 +701,11 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None 
 
 @bot.slash_command(name="showinfo", description="Shows information for the user.")
 async def showinfo_command(ctx: discord.ApplicationContext):
-    """Shows information for the user, such as their
+    """
+    Shows information for the user, such as their
     SteamID and whether their Steam
-    account is linked with the bot."""
+    account is linked with the bot.
+    """
     await ctx.defer()
 
     try:
@@ -739,9 +743,11 @@ async def showinfo_command(ctx: discord.ApplicationContext):
 
 @bot.slash_command(name="simpletest", description="Simple test command.")
 async def simpletest_command(ctx: discord.ApplicationContext):
-    """Simple test command that
+    """
+    Simple test command that
     simulates some processing delay and
-    responds with a message."""
+    responds with a message.
+    """
     await ctx.defer()
     await asyncio.sleep(1)  # Simulate some processing delay
     await ctx.respond("This is a test message.")
