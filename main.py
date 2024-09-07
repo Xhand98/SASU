@@ -900,7 +900,6 @@ async def sasubackup_command(ctx: discord.ApplicationContext):
         await ctx.respond("You are not allowed to use this command.")
         return
 
-
     try:
         await ctx.defer()
         db = Dbm(db_path="db/users.db")
