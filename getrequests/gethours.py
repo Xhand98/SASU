@@ -8,8 +8,7 @@ async def ejecutar(user):
 
     url = f"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={api_key}&steamid={steam_id}&format=json"
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
                 total_playtime_minutes = sum(

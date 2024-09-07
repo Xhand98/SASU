@@ -8,8 +8,7 @@ async def ejecutar(user):
 
     url = f"https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={steamuser}"
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
                 iddd = data["response"]["steamid"]

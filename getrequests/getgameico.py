@@ -7,8 +7,7 @@ async def ejecutar(user):
     code = None
 
     url = f"https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?key={api_key}&steamid={user}"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
                 if (

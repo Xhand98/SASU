@@ -7,8 +7,7 @@ async def ejecutar(user):
 
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
                 iddd = data["response"]["players"][0]["avatarfull"]
@@ -23,8 +22,7 @@ async def personaname(user):
 
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
                 info = data["response"]["players"][0]["personaname"]
@@ -39,8 +37,7 @@ async def link(user):
 
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
                 info = data["response"]["players"][0]["profileurl"]
@@ -55,25 +52,21 @@ async def get_country(user):
 
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
-                players = data["response"]["players"]
-
-                if len(players) > 0 and "loccountrycode" in players[0]:
-                    country_code = players[0]["loccountrycode"]
-
-                    def country_code_to_flag(country_code):
-                        country_code = country_code.upper()
-                        flag = "".join(
-                            chr(0x1F1E6 + ord(char) - ord("A")) for char in country_code
-                        )
-                        return flag
-
-                    flag = country_code_to_flag(country_code)
-                else:
-                    flag = "No flag/bandera"
+    async with aiohttp.ClientSession() as session, session.get(url) as response:
+        if response.status == 200:
+            data = await response.json()
+            players = data["response"]["players"]
+            if len(players) > 0 and "loccountrycode" in players[0]:
+                country_code = players[0]["loccountrycode"]
+                def country_code_to_flag(country_code):
+                    country_code = country_code.upper()
+                    flag = "".join(
+                        chr(0x1F1E6 + ord(char) - ord("A")) for char in country_code
+                    )
+                    return flag
+                flag = country_code_to_flag(country_code)
             else:
-                flag = f"Error retrieving data: {response.status}"
+                flag = "No flag/bandera"
+        else:
+            flag = f"Error retrieving data: {response.status}"
     return flag
