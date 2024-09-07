@@ -23,5 +23,5 @@ async def ejecutar(user):
                     print(icourl)
             else:
                 print(f"Error al obtener los datos: {response.status}")
-                iddd = None
+                icourl = None
     return icourl
