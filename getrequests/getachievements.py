@@ -2,7 +2,10 @@ import aiohttp
 import asyncio
 import os
 
+from dotenv import load_dotenv
+
 # CONFIG
+load_dotenv()
 API_KEY = os.getenv("STEAM_API_KEY")
 
 
