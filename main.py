@@ -81,7 +81,6 @@ async def is_banned(discord_id):
     Returns:
         bool: True if the user is banned, False otherwise
     """
-
     if discord_id:
         db = Dbm(db_path="./db/users.db")
         db.connect()
@@ -105,7 +104,6 @@ async def user_info(steamid):
         The username of the user if the SteamID is valid,
         otherwise "User not found or data is private".
     """
-
     pic_data = await getinfo.get_pic(steamid)
     if pic_data:  # Check if pic_data is not None
         user_name = pic_data.get("personaname")
@@ -151,7 +149,6 @@ async def verify_banned(ctx: discord.ApplicationContext):
 
     If the user is banned, send a message to the user and prevent the command from executing.
     """
-
     if await is_banned(ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
         return
@@ -390,7 +387,6 @@ async def getlevel_command(
     Returns:
         discord.InteractionMessage: The interaction message containing the level of the user.
     """
-
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -683,7 +679,6 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None 
 @bot.slash_command(name="showinfo", description="Shows information for the user.")
 async def showinfo_command(ctx: discord.ApplicationContext):
     """Shows information for the user, such as their SteamID and whether their Steam account is linked with the bot."""
-
     await ctx.defer()
 
     try:
