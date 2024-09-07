@@ -77,13 +77,15 @@ def create_embed_tables(embed: discord.Embed, tables: list, default_inline=True)
             if len(obj) == 6 and isinstance(obj[5], str):
                 embed.add_field(
                     name="Steam Info",
-                    value=f"ID: {obj[0]}\nSteam ID: {obj[1]}\nUser: {obj[3]}\nCreated: {obj[4]}\nUpdated: {obj[5]}",
+                    value=f"ID: {obj[0]}\nSteam ID: {obj[1]}\nUser: "
+                          f"{obj[3]}\nCreated: {obj[4]}\nUpdated: {obj[5]}",
                     inline=default_inline,
                 )
             elif len(obj) == 5:
                 embed.add_field(
                     name=f"Discord Info: {obj[0]}",
-                    value=f"ID: {obj[0]}\nDiscord ID: {obj[1]}\nUser: {obj[2]}\nCreated: {obj[3]}\nUpdated: {obj[4]}",
+                    value=f"ID: {obj[0]}\nDiscord ID: {obj[1]}\nUser:"
+                          f" {obj[2]}\nCreated: {obj[3]}\nUpdated: {obj[4]}",
                     inline=default_inline,
                 )
             else:

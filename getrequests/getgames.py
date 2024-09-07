@@ -6,7 +6,8 @@ async def ejecutar(user):
     api_key = os.getenv("STEAM_API_KEY")
     steamid = user
 
-    url = f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={api_key}&steamid={steamid}&format=json"
+    url = (f"https://api.steampowered.com/IPlayerService/GetOwnedGames"
+           f"/v0001/?key={api_key}&steamid={steamid}&format=json")
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:

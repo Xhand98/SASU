@@ -22,14 +22,22 @@ async def fetch_json(session, url):
 
 # Get Achievements
 async def get_achievements(session, app_id, steam_id, api):
-    url = f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid={app_id}&key={api}&steamid={steam_id}"
+    url = (f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/"
+           f"?appid={app_id}"
+           f"&key={api}"
+           f"&steamid={steam_id}")
     json_res = await fetch_json(session, url)
     return json_res
 
 
 # Get Player Games
 async def get_player_games(session, steam_id):
-    url = f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={API_KEY}&steamid={steam_id}&format=json&include_appinfo=1&include_played_free_games=1"
+    url = (f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/"
+           f"?key={API_KEY}"
+           f"&steamid={steam_id}"
+           f"&format=json"
+           f"&include_appinfo=1"
+           f"&include_played_free_games=1")
     json_res = (await fetch_json(session, url))["response"]
 
     unlocked_achievement_count = 0

@@ -5,7 +5,8 @@ import os
 async def ejecutar(user):
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
+    url = (f"https://api.steampowered.com/ISteamUser/"
+           f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}")
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
@@ -20,7 +21,8 @@ async def ejecutar(user):
 async def personaname(user):
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
+    url = (f"https://api.steampowered.com/ISteamUser/GetPlayer"
+           f"Summaries/v0002/?key={api_key}&steamids={user}")
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
@@ -35,7 +37,8 @@ async def personaname(user):
 async def link(user):
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
+    url = (f"https://api.steampowered.com/ISteamUser/"
+           f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}")
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
@@ -50,7 +53,8 @@ async def link(user):
 async def get_country(user):
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
+    url = (f"https://api.steampowered.com/ISteamUser/"
+           f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}")
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:

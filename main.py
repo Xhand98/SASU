@@ -833,7 +833,8 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"
             "`</getachievements:1275183733116370946>` - Obtén el número de logros "
             "que has desbloqueado.\n\n"
             "# ¿Necesitas más ayuda?\n"
-            "Si necesitas más asistencia, no dudes en preguntar en el canal de soporte o "
+            "Si necesitas más asistencia, no dudes  "
+            "en preguntar en el canal de soporte o"
             "contactar a cualquier <@543132514848604170> ."
         )
 

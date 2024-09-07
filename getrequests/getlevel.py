@@ -5,7 +5,8 @@ import os
 async def ejecutar(user):
     api_key = os.getenv("STEAM_API_KEY")
 
-    url: str = f"https://api.steampowered.com/IPlayerService/GetBadges/v1/?key={api_key}&steamid={user}&skip_unvetted_apps=0"
+    url: str = (f"https://api.steampowered.com/IPlayerService/GetBadges/v1/"
+                f"?key={api_key}&steamid={user}&skip_unvetted_apps=0")
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
