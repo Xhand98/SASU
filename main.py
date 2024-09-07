@@ -8,13 +8,12 @@ import getrequests.getinfo as getinfo
 import misc.embed as embed
 import getrequests.getgameico as getgameico
 import getrequests.getachievements as getachievements
-from db.dbmanager import DatabaseManager as dbm
+from db.dbmanager import DatabaseManager as Dbm
 import asyncio
 
 load_dotenv()
 bot = discord.Bot()
 AUTHORIZED_USER_IDS = [543132514848604170, 987654321012345678]
-AUTHORIZED_ROLE_IDS = [1269079923176505394, 234567890123456789]
 
 
 def normalize_data(data):
@@ -31,7 +30,7 @@ def normalize_data(data):
     return normalized_data
 
 
-async def check_user(steamid, ctx: discord.ApplicationCommand):
+async def check_user(steamid, ctx: discord.ApplicationContext):
     """Checks if a user has a SteamID associated with their Discord ID in the database.
 
     If the user has a SteamID associated, it returns the SteamID, otherwise it returns None.
@@ -44,17 +43,18 @@ async def check_user(steamid, ctx: discord.ApplicationCommand):
     int | str | None: The SteamID if the user has one, otherwise None.
     """
     if steamid is None:
-        steamid = await get_steamid_from_db(str(ctx.author.id))[0][0]
+        steamid = await get_steamid_from_db(str(ctx.author.id))
+        steamid = steamid[0][0]
     steamid = await process_user_or_steamid(steamid)
     return steamid
 
 
-async def get_steamid_from_db(id):
+async def get_steamid_from_db(discord_id: str):
     """Gets the SteamID associated with a Discord ID from the database
 
     Parameters
     ----------
-    id : int
+    discord_id : int
         The Discord ID of the user to get the SteamID for
 
     Returns
@@ -64,9 +64,9 @@ async def get_steamid_from_db(id):
         of the user. If the user is not found in the database, an empty list is
         returned.
     """
-    db = dbm(db_path="./db/users.db")
+    db = Dbm(db_path="./db/users.db")
     db.connect()
-    data = db.get_steam_info(id)
+    data = db.get_steam_info(discord_id)
     db.close()
     return data
 
@@ -82,7 +82,7 @@ async def is_banned(discord_id):
     """
 
     if discord_id:
-        db = dbm(db_path="./db/users.db")
+        db = Dbm(db_path="./db/users.db")
         db.connect()
         queso = db.isbanned(discord_id)
         db.close()
@@ -91,9 +91,7 @@ async def is_banned(discord_id):
 
 async def is_authorized(user: discord.User) -> bool:
     """Checks if the user has authorization to use the command"""
-    return user.id in AUTHORIZED_USER_IDS or any(
-        role.id in AUTHORIZED_ROLE_IDS for role in user.roles
-    )
+    return user.id in AUTHORIZED_USER_IDS
 
 
 async def user_info(steamid):
@@ -665,6 +663,7 @@ async def getachievements_command(
     Args:
         steamid (str | None): The SteamID of the user to get the achievements for.
             If None, the SteamID linked to the user who invoked the command is used.
+        ctx (discord.ApplicationContext): The context of the slash command.
 
     Returns:
         A message with the number of achievements the user has unlocked.
@@ -699,13 +698,15 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None 
 
     await ctx.defer()
     if steamid:
-        steamid: int = await process_user_or_steamid(steamid)
+        steamid = await process_user_or_steamid(steamid)
         discordid = str(ctx.author.id)
         discordname = ctx.author.name
         pic_data = await getinfo.get_pic(steamid)
         steam_username = pic_data.get("personaname")
-        db = dbm(db_path="./db/users.db")
+        db = Dbm(db_path="./db/users.db")
         db.connect()
+        discordid = int(discordid)
+        steamid = int(steamid)
         db.link_steam_id(discordid, steamid, steam_username, discordname)
 
         await ctx.respond(f"Your SteamID {steamid} has been linked to {ctx.author}.")
@@ -721,28 +722,18 @@ async def showinfo_command(ctx: discord.ApplicationContext):
 
     await ctx.defer()
 
-    def add_true_to_data(data):
-        """Adds a True at the end of each tuple in a list of tuples.
-
-        Args:
-            data (list[tuple]): A list of tuples.
-
-        Returns:
-            list[tuple]: A new list of tuples with a True added to the end of each tuple.
-        """
-        return [item + (True,) for item in data]
 
     try:
         discordid = str(ctx.author.id)
 
         # Sample data
-        data = await get_steamid_from_db(discordid)
+        info = await get_steamid_from_db(discordid)
 
         # Normalize data to ensure consistent structure
-        data = normalize_data(data)
+        info = normalize_data(info)
 
         # Debug: Print the normalized data structure
-        print(f"Normalized data: {data}")
+        print(f"Normalized data: {info}")
 
         embedd = discord.Embed(
             title=f"{ctx.author.name}'s Stored Information",
@@ -750,7 +741,7 @@ async def showinfo_command(ctx: discord.ApplicationContext):
         )
 
         if discordid:
-            embed.create_embed_tables(embedd, data, default_inline=True)
+            embed.create_embed_tables(embedd, info, default_inline=True)
             if embedd.fields:  # Check if embed has any fields
                 await ctx.respond(embed=embedd)
             else:
@@ -866,6 +857,7 @@ async def sasuban_command(ctx: discord.ApplicationContext, member: discord.Membe
     Args:
         ctx: The slash command context.
         discordid: The Discord ID of the user to ban.
+        :param member: The member to ban from using the bot.
 
     Returns:
         A message indicating whether the user was banned or not.
@@ -876,7 +868,7 @@ async def sasuban_command(ctx: discord.ApplicationContext, member: discord.Membe
 
     try:
         await ctx.defer()
-        db = dbm(db_path="db/users.db")
+        db = Dbm(db_path="db/users.db")
         db.connect()
         db.ban(member.id)
         db.close()
@@ -892,7 +884,7 @@ async def isbanned_command(ctx: discord.ApplicationContext, member: discord.Memb
 
     Args:
         ctx (discord.ApplicationContext): The slash command context.
-        discordid (int): The Discord ID of the user to check.
+        member (discord.Member): The Discord ID of the user to check.
 
     Returns:
         str: A message indicating whether the user is banned or not.
@@ -914,14 +906,14 @@ async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Mem
 
     Args:
         ctx: The slash command context.
-        discordid: The Discord ID of the user to unban.
+        member: The member to unban from using the bot.
 
     Returns:
         A message indicating whether the user was unbanned or not.
     """
     try:
         await ctx.defer()
-        db = dbm(db_path="db/users.db")
+        db = Dbm(db_path="db/users.db")
         db.connect()
         db.unban(member.id)
         db.close()
@@ -949,7 +941,7 @@ async def sasuunban_command(ctx: discord.ApplicationContext):
     """
     try:
         await ctx.defer()
-        db = dbm(db_path="db/users.db")
+        db = Dbm(db_path="db/users.db")
         db.connect()
         db.backup_database()
         db.close()
