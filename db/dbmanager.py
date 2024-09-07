@@ -83,14 +83,16 @@ class DatabaseManager:
                     "discord_id": {"type": str, "constraints": "NOT NULL"},
                 },
                 "fk": [
-                    {"column": "discord_id", "references": ["discord_users", "discord_id"]}
+                    {"column": "discord_id",
+                     "references": ["discord_users", "discord_id"]}
                 ],
             }
 
             self.db.complicated_create_tables([structure1, structure2, structure3])
 
         def link_steam_id(
-            self, discord_id: int, steam_id: int, steam_username: str, discord_username: str
+            self, discord_id: int, steam_id: int,
+            steam_username: str, discord_username: str
         ):
             # Insert data into steam_accounts table
             self.db.simple_insert_data(
