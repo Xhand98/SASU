@@ -17,7 +17,7 @@ async def fetch_json(session, url):
             return data
         except aiohttp.ContentTypeError as e:
             error_body = await response.text()
-            raise ValueError(f"Invalid response body: {error_body}")
+            raise ValueError(f"Invalid response body: {error_body, e}")
 
 
 # Get Achievements
