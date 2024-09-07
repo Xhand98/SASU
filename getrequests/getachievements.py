@@ -21,8 +21,8 @@ async def fetch_json(session, url):
 
 
 # Get Achievements
-async def get_achievements(session, app_id, steam_id, API_KEY):
-    url = f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid={app_id}&key={API_KEY}&steamid={steam_id}"
+async def get_achievements(session, app_id, steam_id, api):
+    url = f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid={app_id}&key={api}&steamid={steam_id}"
     json_res = await fetch_json(session, url)
     return json_res
 
