@@ -18,7 +18,8 @@ AUTHORIZED_USER_IDS = [543132514848604170, 987654321012345678]
 
 
 def normalize_data(data):
-    """Ensures all tuples have the same number of elements by adding placeholders if necessary."""
+    """Ensures all tuples have the same number
+    of elements by adding placeholders if necessary."""
     max_length = max(len(item) for item in data)
     normalized_data = [
         (
@@ -34,7 +35,8 @@ def normalize_data(data):
 async def check_user(steamid, ctx: discord.ApplicationContext):
     """Checks if a user has a SteamID associated with their Discord ID in the database.
 
-    If the user has a SteamID associated, it returns the SteamID, otherwise it returns None.
+    If the user has a SteamID associated,
+    it returns the SteamID, otherwise it returns None.
 
     Parameters:
     steamid (int | str): The SteamID to check.
@@ -132,7 +134,9 @@ async def process_user_or_steamid(user_input: str):
     """Process a user input to get a SteamID.
 
     Args:
-        user_input (str): Input to process. Can be a SteamID, a username, or a URL to a Steam profile.
+        user_input (str): Input to process.
+        Can be a SteamID, a username,
+        or a URL to a Steam profile.
 
     Returns:
         str: SteamID, or None if an error occurred.
@@ -385,10 +389,13 @@ async def getlevel_command(
 
     Args:
         ctx (discord.ApplicationContext): The interaction context.
-        steamid (str | None, optional): The SteamID of the user to get the level of. Defaults to None.
+        steamid (str | None, optional): The
+        SteamID of the user to get the level of.
+        Defaults to None.
 
     Returns:
-        discord.InteractionMessage: The interaction message containing the level of the user.
+        discord.InteractionMessage:
+        The interaction message containing the level of the user.
     """
     await ctx.defer()
     if steamid is None:
@@ -732,7 +739,9 @@ async def showinfo_command(ctx: discord.ApplicationContext):
 
 @bot.slash_command(name="simpletest", description="Simple test command.")
 async def simpletest_command(ctx: discord.ApplicationContext):
-    """Simple test command that simulates some processing delay and responds with a message."""
+    """Simple test command that
+    simulates some processing delay and
+    responds with a message."""
     await ctx.defer()
     await asyncio.sleep(1)  # Simulate some processing delay
     await ctx.respond("This is a test message.")
