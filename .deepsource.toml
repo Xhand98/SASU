@@ -5,3 +5,7 @@ name = "python"
 
   [analyzers.meta]
   runtime_version = "3.x.x"
+    supported_languages = ["python"]
+
+[flake8]
+max-line-length = 120

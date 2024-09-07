@@ -2,7 +2,7 @@
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 <a href="https://github.com/psf/black/blob/main/LICENSE"><img alt="License: MIT" src="https://black.readthedocs.io/en/stable/_static/license.svg"></a>
-
+[![DeepSource](https://app.deepsource.com/gh/Xhand98/SASU.svg/?label=code+coverage&show_trend=true&token=o87veKt-1XIxn5TctzmCKnZm)](https://app.deepsource.com/gh/Xhand98/SASU/)
 ## Table of Contents
 
 - [SASU - Discord Bot](#sasu---discord-bot)
