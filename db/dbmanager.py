@@ -127,10 +127,10 @@ class DatabaseManager:
     def run_custom_query(self, query):
         self.db.custom_execute(query)
 
-    def update_user_info(discord_id, new_username, date):
+    def update_user_info(self, discord_id, new_username, date):
         try:
             # Establish a new database connection for this thread
-            connection = sqlite3.connect("./db/users.db")
+            connection = self.conn
             db = Database(connection)
 
             # Prepare the update statement with multiple columns
