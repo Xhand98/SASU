@@ -3,7 +3,6 @@ import discord
 import os
 from dotenv import load_dotenv
 import time
-import datetime
 import getrequests.getinfo as getinfo
 import misc.embed as embed
 import getrequests.getgameico as getgameico
@@ -138,7 +137,7 @@ async def process_user_or_steamid(user_input: str):
     Returns:
         str: SteamID, or None if an error occurred.
     """
-
+    user_input = str(user_input)
     if user_input.isdigit() and len(user_input) == 17:
         return user_input  # SteamID
     else:
@@ -196,12 +195,12 @@ async def gethours_command(
             hours = await get_steamh(steamid)
             if hours:
                 user_name = await user_info(steamid)
-                embed = discord.Embed(
+                result = discord.Embed(
                     title=f"{user_name}'s Hours",
                     description=f"{user_name} has {round(hours, 2)} hours.",
                     color=discord.Color.random(),
                 )
-                embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+                result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
                 await ctx.respond(embed=embed)
             else:
                 await ctx.respond(f"Couldn't find hours for SteamID {steamid}.")
@@ -236,13 +235,13 @@ async def getsteamid_command(
         if steamid:
             user_name = await user_info(steamid)
 
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Steam ID",
                 description=f"{user_name}'s Steam ID is {steamid}",
                 color=discord.Color.random(),
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond("No Steam ID found in the database for your account.")
         return
@@ -260,13 +259,13 @@ async def getsteamid_command(
 
     user_name = await user_info(steamid)
 
-    embed = discord.Embed(
+    result = discord.Embed(
         title=f"{user_name}'s Steam ID",
         description=f"{user_name}'s Steam ID is {steamid}",
         color=discord.Color.random(),
     )
-    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-    await ctx.respond(embed=embed)
+    result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+    await ctx.respond(embed=result)
 
 
 @bot.slash_command(
@@ -296,13 +295,13 @@ async def getgames_command(
         games = await getinfo.get_games(steamid)
         if games:
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Games",
                 description=f"{user_name} has {games} games.",
                 color=discord.Color.random(),
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond(
                 f"Couldn't find the number of games for SteamID {steamid}."
@@ -328,12 +327,12 @@ async def getpfp_command(
         if pic_data and pic_data.get("avatar"):
             avatar = pic_data["avatar"]
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name} Pfp", color=discord.Color.random()
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            embed.set_image(url=avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            result.set_image(url=avatar)
+            await ctx.respond(result=result)
         else:
             await ctx.respond(f"Couldn't find profile picture for SteamID {steamid}.")
     else:
@@ -349,6 +348,7 @@ async def getlink_command(
 
     Args:
         steamid (str, optional): The SteamID of the user to get the link for. Defaults to None.
+        ctx (discord.ApplicationContext): The interaction context.
 
     Returns:
         discord.Embed: An embed containing the user's Steam profile link.
@@ -365,13 +365,13 @@ async def getlink_command(
         if pic_data and pic_data.get("profileurl"):
             url = pic_data["profileurl"]
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Link",
                 description=f"{user_name}'s link is {url}",
                 color=discord.Color.random(),
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond(f"Couldn't find profile link for SteamID {steamid}.")
     else:
@@ -404,13 +404,13 @@ async def getlevel_command(
         level = await getinfo.get_level(steamid)
         if level is not None:
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Level",
                 description=f"{user_name}'s level is {level}",
                 color=discord.Color.random(),
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond(f"Couldn't find the level for SteamID {steamid}.")
     else:
@@ -442,13 +442,13 @@ async def getbadges_command(
         badges = await getinfo.get_badges(steamid)
         if badges is not None:
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Badges",
                 description=f"{user_name} has {badges} badges.",
                 color=discord.Color.random(),
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond(f"Couldn't find the badges for SteamID {steamid}.")
     else:
@@ -480,13 +480,13 @@ async def getcountry_command(
         country = await getinfo.get_country(steamid)
         if country:
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Country",
                 description=f"{user_name}'s lives in {country}",
                 color=discord.Color.random(),
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond(f"Couldn't find the country for SteamID {steamid}.")
     else:
@@ -526,45 +526,42 @@ async def getuser_command(
         user_achievements = await getachievements.main(steamid)
 
         # Create embed
-        embed = discord.Embed(
+        result = discord.Embed(
             title=f"{user_name}'s Steam Profile",
             description="Here's a quick overview of the user's Steam profile.",
             color=discord.Color.random(),
             url=user_link["profileurl"],
         )
 
-        # Set thumbnail
-        default_avatar_url = user_avatar
-        # print(user_avatar)
-        embed.set_thumbnail(url=user_avatar["avatar"])
+        result.set_thumbnail(url=user_avatar["avatar"])
 
         # Add fields
-        embed.add_field(
+        result.add_field(
             name="Total Hours Played",
             value=f"{total_hours:.2f} hours" if total_hours else "Private/Unavailable",
             inline=True,
         )
-        embed.add_field(
+        result.add_field(
             name="Total Games Owned",
             value=f"{total_games} games" if total_games else "Private/Unavailable",
             inline=True,
         )
-        embed.add_field(
+        result.add_field(
             name="Steam Level",
             value=f"{user_level}" if user_level else "Private/Unavailable",
             inline=True,
         )
-        embed.add_field(
+        result.add_field(
             name="Badges",
             value=f"{user_badges}" if user_badges else "Private/Unavailable",
             inline=True,
         )
-        embed.add_field(
+        result.add_field(
             name="Country",
             value=f"{user_country}" if user_country else "Private/Unavailable",
             inline=True,
         )
-        embed.add_field(
+        result.add_field(
             name="Total Achievements",
             value=(
                 f"{user_achievements}" if user_achievements else "Private/Unavailable"
@@ -573,7 +570,7 @@ async def getuser_command(
         )
 
         # Send embed
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=result)
 
         end_time = time.perf_counter()
         print(f"Execution took {end_time - start_time:.2f} seconds")
@@ -608,48 +605,16 @@ async def getlatestgame_command(
         ico = await getgameico.ejecutar(steamid)
         if ico is not None:
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Latest Game", color=discord.Color.random()
             )
-            embed.set_image(url=ico)
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_image(url=ico)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond(f"Couldn't find the latest game for SteamID {steamid}.")
     else:
         await ctx.respond(f"Invalid SteamID or user not found.")
-
-
-@bot.slash_command(
-    name="unixconvert", description="Converts a Unix date and makes it a standard one."
-)
-async def unixconvert_command(ctx: discord.ApplicationContext, *, timestamp: str):
-    """
-    Converts a Unix date and makes it a standard one.
-
-    Args:
-        ctx: The slash command context.
-        timestamp: The Unix timestamp to convert.
-
-    Returns:
-        A message with the converted date in various formats (UTC, local, ISO 8601).
-    """
-    await ctx.defer()
-    try:
-        message = int(timestamp)
-        date = datetime.datetime.fromtimestamp(message)
-        date_utc = datetime.datetime.fromtimestamp(message, tz=datetime.timezone.utc)
-        date_local = datetime.datetime.fromtimestamp(message)
-        response = (
-            f"**Date:**\n"
-            f"**UTC Time:** {date_utc.strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
-            f"**Local Time:** {date_local.strftime('%Y-%m-%d %H:%M:%S %Z%z')}\n"
-            f"**ISO 8601:** {date_utc.isoformat()}Z"
-        )
-        await ctx.respond(f"{response}")
-    except ValueError:
-        await ctx.respond(f"Invalid Unix timestamp: {timestamp}")
-
 
 @bot.slash_command(
     name="getachievements",
@@ -680,13 +645,13 @@ async def getachievements_command(
         achievements = await getachievements.main(steamid)
         if achievements is not None:
             user_name = await user_info(steamid)
-            embed = discord.Embed(
+            result = discord.Embed(
                 title=f"{user_name}'s Achievements",
                 description=f"{user_name} has {achievements} achievements.",
                 color=discord.Color.random(),
             )
-            embed.set_author(name=bot.user.name, icon_url=bot.user.avatar)
-            await ctx.respond(embed=embed)
+            result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
+            await ctx.respond(embed=result)
         else:
             await ctx.respond(f"Couldn't find your achievements.")
     else:
@@ -782,6 +747,8 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"
     Returns
     -------
     None
+    :param language:
+    :param ctx:
     """
     await ctx.defer()
 
@@ -857,7 +824,9 @@ async def sasuban_command(ctx: discord.ApplicationContext, member: discord.Membe
     Args:
         ctx: The slash command context.
         discordid: The Discord ID of the user to ban.
+        :param ctx:
         :param member: The member to ban from using the bot.
+        ctx: (discord.ApplicationContext) The slash command context.
 
     Returns:
         A message indicating whether the user was banned or not.
@@ -923,7 +892,7 @@ async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Mem
 
 
 @bot.slash_command(name="sasubackup", description="Backs up database.")
-async def sasuunban_command(ctx: discord.ApplicationContext):
+async def sasubackup_command(ctx: discord.ApplicationContext):
 
     if not await is_authorized(ctx.author):
         await ctx.respond("You are not allowed to use this command.")
