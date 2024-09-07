@@ -31,6 +31,7 @@ class DatabaseManager:
         Updates user information.
         backup_database(): Creates a backup of the database.
     """
+
     class DatabaseManager:
         def __init__(self, db_path):
             self.db_path = db_path
