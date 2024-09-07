@@ -172,7 +172,7 @@ async def on_ready():
     name="gethours", description="Get hours of a Steam user across all its games."
 )
 async def gethours_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Get hours of a Steam user across all its games.
@@ -215,7 +215,7 @@ async def gethours_command(
 
 @bot.slash_command(name="getsteamid", description="Get the Steam ID of a user.")
 async def getsteamid_command(
-        ctx: discord.ApplicationContext, *, steamurl: str | None = None
+    ctx: discord.ApplicationContext, *, steamurl: str | None = None
 ):
     """
     Gets the Steam ID of a user, either from the database if no URL is provided
@@ -275,7 +275,7 @@ async def getsteamid_command(
     name="getgames", description="Get the number of all the games a user owns."
 )
 async def getgames_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Get the number of all the games a user owns.
@@ -316,7 +316,7 @@ async def getgames_command(
 
 @bot.slash_command(name="getpfp", description="Get the profile picture of a user.")
 async def getpfp_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     await ctx.defer()
     if steamid is None:
@@ -344,7 +344,7 @@ async def getpfp_command(
 
 @bot.slash_command(name="getlink", description="Get the link to a user's profile.")
 async def getlink_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the link to a user's Steam profile.
@@ -384,7 +384,7 @@ async def getlink_command(
 
 @bot.slash_command(name="getlevel", description="Get the level of a user.")
 async def getlevel_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the level of a user.
@@ -425,7 +425,7 @@ async def getlevel_command(
 
 @bot.slash_command(name="getbadges", description="Get the number of badges a user has.")
 async def getbadges_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the number of badges a user has.
@@ -465,7 +465,7 @@ async def getbadges_command(
 
 @bot.slash_command(name="getcountry", description="Get the country of a user.")
 async def getcountry_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the country of a user.
@@ -506,7 +506,7 @@ async def getcountry_command(
 
 @bot.slash_command(name="getuser", description="Get a preview of a user's profile.")
 async def getuser_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     await ctx.defer()
     try:
@@ -593,7 +593,7 @@ async def getuser_command(
 
 @bot.slash_command(name="getlatestgame", description="Get Latest game of a user.")
 async def getlatestgame_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Get the latest game of a user.
@@ -634,7 +634,7 @@ async def getlatestgame_command(
     description="Gets the number of achievements a player has unlocked.",
 )
 async def getachievements_command(
-        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """Gets the number of achievements a player has unlocked.
 
@@ -694,8 +694,8 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None 
         await ctx.respond(f"Your SteamID {steamid} has been linked to {ctx.author}.")
     else:
         await ctx.respond(
-            "If you want to setup the bot to work without putting " +
-            "the input, write </tutorial:1275183733116370950>."
+            "If you want to setup the bot to work without putting "
+            + "the input, write </tutorial:1275183733116370950>."
         )
 
 
@@ -929,14 +929,14 @@ async def isbanned_command(ctx: discord.ApplicationContext, member: discord.Memb
 @bot.slash_command(name="sasuunban", description="Unbans user from using the bot.")
 async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Member):
     """
-        Unban a user from using the bot.
+    Unban a user from using the bot.
 
-        Args:
-            ctx: The slash command context.
-            member: The member to unban from using the bot.
+    Args:
+        ctx: The slash command context.
+        member: The member to unban from using the bot.
 
-        Returns:
-            A message indicating whether the user was unbanned or not.
+    Returns:
+        A message indicating whether the user was unbanned or not.
     """
     if not is_authorized(ctx.author):
         await ctx.respond("You are not allowed to use this command.")
@@ -956,14 +956,14 @@ async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Mem
 @bot.slash_command(name="sasubackup", description="Backs up database.")
 async def sasubackup_command(ctx: discord.ApplicationContext):
     """
-        Unban a user from using the bot.
+    Unban a user from using the bot.
 
-        Args:
-            ctx: The slash command context.
+    Args:
+        ctx: The slash command context.
 
-        Returns:
-            A message indicating wheter
-            the daatabase was backeup or not.
+    Returns:
+        A message indicating wheter
+        the daatabase was backeup or not.
     """
     if not await is_authorized(ctx.author):
         await ctx.respond("You are not allowed to use this command.")
