@@ -891,10 +891,9 @@ async def sasubackup_command(ctx: discord.ApplicationContext):
 
         Args:
             ctx: The slash command context.
-            discordid: The Discord ID of the user to unban.
 
         Returns:
-            A message indicating whether the user was unbanned or not.
+            A message indicating wheter the daatabase was backeup or not.
     """
     if not await is_authorized(ctx.author):
         await ctx.respond("You are not allowed to use this command.")
