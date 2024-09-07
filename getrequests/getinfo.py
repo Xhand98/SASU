@@ -61,8 +61,8 @@ async def get_pic(user):
             "profileurl": player.get("profileurl"),
             "personaname": player.get("personaname"),
         }
-    else:
-        return None
+
+    return None
 
 
 async def get_level(user):

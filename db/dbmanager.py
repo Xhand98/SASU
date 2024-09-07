@@ -117,8 +117,8 @@ class DatabaseManager:
             "blacklist", "discord_id", f"WHERE discord_id = '{discord_id}'"
         ):
             return True
-        else:
-            return False
+
+        return False
 
     def unban(self, discord_id):
         self.db.simple_delete_data("blacklist", f"discord_id = '{discord_id}'")

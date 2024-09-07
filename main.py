@@ -108,8 +108,8 @@ async def user_info(steamid):
     if pic_data:  # Check if pic_data is not None
         user_name = pic_data.get("personaname")
         return user_name
-    else:
-        return "User not found or data is private"
+
+    return "User not found or data is private"
 
 
 async def get_steamh(res):
@@ -140,12 +140,8 @@ async def process_user_or_steamid(user_input: str):
     user_input = str(user_input)
     if user_input.isdigit() and len(user_input) == 17:
         return user_input  # SteamID
-    else:
-        try:
-            return await getinfo.get_steamid(user_input)
-        except Exception as e:
-            print(f"Error resolving SteamID: {e}")
-            return None
+
+    return await getinfo.get_steamid(user_input)
 
 
 async def verify_banned(ctx: discord.ApplicationContext):
