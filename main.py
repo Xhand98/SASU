@@ -165,7 +165,7 @@ async def on_ready():
     name="gethours", description="Get hours of a Steam user across all its games."
 )
 async def gethours_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Get hours of a Steam user across all its games.
@@ -207,7 +207,7 @@ async def gethours_command(
 
 @bot.slash_command(name="getsteamid", description="Get the Steam ID of a user.")
 async def getsteamid_command(
-    ctx: discord.ApplicationContext, *, steamurl: str | None = None
+        ctx: discord.ApplicationContext, *, steamurl: str | None = None
 ):
     """
     Gets the Steam ID of a user, either from the database if no URL is provided
@@ -267,7 +267,7 @@ async def getsteamid_command(
     name="getgames", description="Get the number of all the games a user owns."
 )
 async def getgames_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Get the number of all the games a user owns.
@@ -307,9 +307,8 @@ async def getgames_command(
 
 @bot.slash_command(name="getpfp", description="Get the profile picture of a user.")
 async def getpfp_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
-
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -336,7 +335,7 @@ async def getpfp_command(
 
 @bot.slash_command(name="getlink", description="Get the link to a user's profile.")
 async def getlink_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the link to a user's Steam profile.
@@ -375,7 +374,7 @@ async def getlink_command(
 
 @bot.slash_command(name="getlevel", description="Get the level of a user.")
 async def getlevel_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the level of a user.
@@ -413,7 +412,7 @@ async def getlevel_command(
 
 @bot.slash_command(name="getbadges", description="Get the number of badges a user has.")
 async def getbadges_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the number of badges a user has.
@@ -451,7 +450,7 @@ async def getbadges_command(
 
 @bot.slash_command(name="getcountry", description="Get the country of a user.")
 async def getcountry_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Gets the country of a user.
@@ -489,7 +488,7 @@ async def getcountry_command(
 
 @bot.slash_command(name="getuser", description="Get a preview of a user's profile.")
 async def getuser_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     await ctx.defer()
     try:
@@ -576,7 +575,7 @@ async def getuser_command(
 
 @bot.slash_command(name="getlatestgame", description="Get Latest game of a user.")
 async def getlatestgame_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """
     Get the latest game of a user.
@@ -616,7 +615,7 @@ async def getlatestgame_command(
     description="Gets the number of achievements a player has unlocked.",
 )
 async def getachievements_command(
-    ctx: discord.ApplicationContext, *, steamid: str | None = None
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
     """Gets the number of achievements a player has unlocked.
 
@@ -655,7 +654,6 @@ async def getachievements_command(
 
 @bot.slash_command(name="setup", description="Sets up user for the use of the bot.")
 async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None = None):
-
     await ctx.defer()
     if steamid:
         steamid = await process_user_or_steamid(steamid)
@@ -750,40 +748,40 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"
 
     if language == "en":
         tutorial_text = (
-        "# Welcome to the Steam Bot Setup Tutorial!\n\n"
-        "## 1. Setting Up Your SteamID\n"
-        "To link your Steam account with the bot, you'll need to provide your SteamID. "
-        "Here's how you can do it:\n"
-        "### 1. Find Your SteamID:\n"
-        "###   - If you already know your SteamID, you can skip this step. Otherwise, "
-        "use one of the following methods:\n"
-        "      The Method: Open your Steam profile in a browser and copy the URL and "
-        "paste it in, </tutorial:1275183733116370950>, the output is your steamID.\n\n"
-        "## 2. Linking Your SteamID with the Bot\n"
-        "Once you have your SteamID, you can link it to your Discord account using the "
-        "following command:\n"
-        "</setup:1275183733116370947> `steamid:<your_steamid>`\n"
-        "Replace <your_steamid> with your actual SteamID.\n\n"
-        "## 3. Verifying Your Setup\n"
-        "To check if your SteamID is successfully linked, use the following command:\n"
-        "</showinfo:1275183733116370949>\n"
-        "The bot will respond with your linked SteamID if everything is set up correctly.\n\n"
-        "## 4. Using Other Commands\n"
-        "Now that your SteamID is linked, you can use other commands to get information "
-        "about your Steam profile. For example:\n"
-        "</gethours:1275183732927758366> - Get total hours played across all your games.\n"
-        "</getgames:1275183732927758368> - Get the number of games you own.\n"
-        "</getlevel:1275183732927758371> - Get your Steam level.\n"
-        "</getbadges:1275183732927758372> - Get the number of badges you have.\n"
-        "</getcountry:1275183732927758374> - Get your country.\n"
-        "</getuser:1275183732927758375> - Get a preview of your Steam profile.\n"
-        "</getlatestgame:1275183733116370944> - Get the icon of your latest game.\n"
-        "</getachievements:1275183733116370946> - Get the number of achievements you "
-        "have unlocked.\n\n"
-        "# Need More Help?\n"
-        "If you need further assistance, feel free to ask in the support channel or "
-        "reach out to  <@543132514848604170>."
-    )
+            "# Welcome to the Steam Bot Setup Tutorial!\n\n"
+            "## 1. Setting Up Your SteamID\n"
+            "To link your Steam account with the bot, you'll need to provide your SteamID. "
+            "Here's how you can do it:\n"
+            "### 1. Find Your SteamID:\n"
+            "###   - If you already know your SteamID, you can skip this step. Otherwise, "
+            "use one of the following methods:\n"
+            "      The Method: Open your Steam profile in a browser and copy the URL and "
+            "paste it in, </tutorial:1275183733116370950>, the output is your steamID.\n\n"
+            "## 2. Linking Your SteamID with the Bot\n"
+            "Once you have your SteamID, you can link it to your Discord account using the "
+            "following command:\n"
+            "</setup:1275183733116370947> `steamid:<your_steamid>`\n"
+            "Replace <your_steamid> with your actual SteamID.\n\n"
+            "## 3. Verifying Your Setup\n"
+            "To check if your SteamID is successfully linked, use the following command:\n"
+            "</showinfo:1275183733116370949>\n"
+            "The bot will respond with your linked SteamID if everything is set up correctly.\n\n"
+            "## 4. Using Other Commands\n"
+            "Now that your SteamID is linked, you can use other commands to get information "
+            "about your Steam profile. For example:\n"
+            "</gethours:1275183732927758366> - Get total hours played across all your games.\n"
+            "</getgames:1275183732927758368> - Get the number of games you own.\n"
+            "</getlevel:1275183732927758371> - Get your Steam level.\n"
+            "</getbadges:1275183732927758372> - Get the number of badges you have.\n"
+            "</getcountry:1275183732927758374> - Get your country.\n"
+            "</getuser:1275183732927758375> - Get a preview of your Steam profile.\n"
+            "</getlatestgame:1275183733116370944> - Get the icon of your latest game.\n"
+            "</getachievements:1275183733116370946> - Get the number of achievements you "
+            "have unlocked.\n\n"
+            "# Need More Help?\n"
+            "If you need further assistance, feel free to ask in the support channel or "
+            "reach out to  <@543132514848604170>."
+        )
     else:  # Spanish by default or if language is 'es'
         tutorial_text = (
             "# ¡Bienvenido al Tutorial de Configuración del Bot de Steam!\n\n"
