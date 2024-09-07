@@ -8,12 +8,12 @@ async def ejecutar(user):
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
-                iddd = data["response"]["players"][0]["avatarfull"]
-            else:
-                print(f"Error al obtener los datos: {response.status}")
-                iddd = None
+        if response.status == 200:
+            data = await response.json()
+            iddd = data["response"]["players"][0]["avatarfull"]
+        else:
+            print(f"Error al obtener los datos: {response.status}")
+            iddd = None
     return iddd
 
 
@@ -23,12 +23,12 @@ async def personaname(user):
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
-                info = data["response"]["players"][0]["personaname"]
-            else:
-                print(f"Error al obtener los datos: {response.status}")
-                info = None
+        if response.status == 200:
+            data = await response.json()
+            info = data["response"]["players"][0]["personaname"]
+        else:
+            print(f"Error al obtener los datos: {response.status}")
+            info = None
     return info
 
 
@@ -38,12 +38,12 @@ async def link(user):
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
-                info = data["response"]["players"][0]["profileurl"]
-            else:
-                print(f"Error al obtener los datos: {response.status}")
-                info = None
+        if response.status == 200:
+            data = await response.json()
+            info = data["response"]["players"][0]["profileurl"]
+        else:
+            print(f"Error al obtener los datos: {response.status}")
+            info = None
     return info
 
 
