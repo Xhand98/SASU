@@ -3,11 +3,13 @@ import discord
 import os
 from dotenv import load_dotenv
 import time
+
+from db.dbmanager import DatabaseManager as Dbm
+import getrequests.getachievements as getachievements
+import getrequests.getgameico as getgameico
 import getrequests.getinfo as getinfo
 import misc.embed as embed
-import getrequests.getgameico as getgameico
-import getrequests.getachievements as getachievements
-from db.dbmanager import DatabaseManager as Dbm
+
 import asyncio
 
 load_dotenv()
