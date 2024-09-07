@@ -147,7 +147,8 @@ async def process_user_or_steamid(user_input: str):
 async def verify_banned(ctx: discord.ApplicationContext):
     """Check if the user is banned from using the bot before each command invocation
 
-    If the user is banned, send a message to the user and prevent the command from executing.
+    If the user is banned, send a message to
+    the user and prevent the command from executing.
     """
     if await is_banned(ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
@@ -172,7 +173,8 @@ async def gethours_command(
 
     Args:
         ctx (discord.ApplicationContext): The context of the slash command.
-        steamid (str | None): The SteamID of the user to get hours for. If None, the user linked to the Discord account will be used.
+        steamid (str | None): The SteamID of the user to get hours for.
+        If None, the user linked to the Discord account will be used.
     """
     await ctx.defer()
     try:
@@ -274,7 +276,8 @@ async def getgames_command(
 
     Args:
         ctx: The interaction object.
-        steamid: The SteamID of the user to get the number of games for. If not provided, the SteamID of the user running the command is used.
+        steamid: The SteamID of the user to get the number of games for.
+        If not provided, the SteamID of the user running the command is used.
 
     Returns:
         None
@@ -341,7 +344,8 @@ async def getlink_command(
     Gets the link to a user's Steam profile.
 
     Args:
-        steamid (str, optional): The SteamID of the user to get the link for. Defaults to None.
+        steamid (str, optional): The SteamID of
+        the user to get the link for. Defaults to None.
         ctx (discord.ApplicationContext): The interaction context.
 
     Returns:
@@ -419,10 +423,12 @@ async def getbadges_command(
 
     Args:
         ctx (discord.ApplicationContext): The context of the command invocation.
-        steamid (str | None, optional): The SteamID of the user. If not provided, the SteamID of the user who invoked the command is used.
+        steamid (str | None, optional): The SteamID of the user.
+        If not provided, the SteamID of the user who invoked the command is used.
 
     Returns:
-        discord.InteractionResponse: The response to the command invocation, containing the number of badges the user has.
+        discord.InteractionResponse: The response to the command
+         invocation, containing the number of badges the user has.
     """
     await ctx.defer()
     if steamid is None:
@@ -457,10 +463,13 @@ async def getcountry_command(
 
     Args:
         ctx (discord.ApplicationContext): The interaction context.
-        steamid (str | None, optional): The SteamID of the user to get the country of. Defaults to None.
+        steamid (str | None, optional):
+        The SteamID of the user to get
+        the country of. Defaults to None.
 
     Returns:
-        discord.InteractionMessage: The interaction message containing the country of the user.
+        discord.InteractionMessage: The interaction
+         message containing the country of the user.
     """
     await ctx.defer()
     if steamid is None:
@@ -582,7 +591,8 @@ async def getlatestgame_command(
 
     Args:
         ctx (discord.ApplicationContext): The interaction context.
-        steamid (str | None, optional): The SteamID of the user. Defaults to None.
+        steamid (str | None, optional): The
+        SteamID of the user. Defaults to None.
 
     Returns:
         discord.InteractionMessage: The response message.
@@ -620,13 +630,18 @@ async def getachievements_command(
     """Gets the number of achievements a player has unlocked.
 
     Args:
-        steamid (str | None): The SteamID of the user to get the achievements for.
-            If None, the SteamID linked to the user who invoked the command is used.
-        ctx (discord.ApplicationContext): The context of the slash command.
+        steamid (str | None): The SteamID
+        of the user to get the achievements for.
+            If None, the SteamID linked to
+             the user who invoked the command is used.
+        ctx (discord.ApplicationContext):
+        The context of the slash command.
 
     Returns:
-        A message with the number of achievements the user has unlocked.
-        If the user does not have a SteamID linked, a message saying so is sent.
+        A message with the number of
+         achievements the user has unlocked.
+        If the user does not have a
+        SteamID linked, a message saying so is sent.
     """
     await ctx.defer()
     if steamid is None:
@@ -677,7 +692,9 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None 
 
 @bot.slash_command(name="showinfo", description="Shows information for the user.")
 async def showinfo_command(ctx: discord.ApplicationContext):
-    """Shows information for the user, such as their SteamID and whether their Steam account is linked with the bot."""
+    """Shows information for the user, such as their
+    SteamID and whether their Steam
+    account is linked with the bot."""
     await ctx.defer()
 
     try:
@@ -729,12 +746,18 @@ async def tutorial_command(ctx: discord.ApplicationContext, language: str = "en"
     """
     Guide on how to set up your Steam account with the bot.
 
-    This command will display a tutorial on how to set up your Steam account with the bot. The tutorial will be in English by default, but you can change the language to Spanish by using the `language` parameter.
+    This command will display a tutorial on how to set
+    up your Steam account with the bot.
+    The tutorial will be in English by default,
+     but you can change the language to Spanish
+      by using the `language` parameter.
 
     Parameters
     ----------
     language : str
-        The language of the tutorial. Can be either "en" for English or "es" for Spanish. Defaults to "en" if not specified.
+        The language of the tutorial.
+        Can be either "en" for English or "es" for Spanish.
+         Defaults to "en" if not specified.
 
     Returns
     -------
@@ -877,7 +900,8 @@ async def isbanned_command(ctx: discord.ApplicationContext, member: discord.Memb
 
     Args:
         ctx (discord.ApplicationContext): The slash command context.
-        member (discord.Member): The Discord ID of the user to check.
+        member (discord.Member):
+        The Discord ID of the user to check.
 
     Returns:
         str: A message indicating whether the user is banned or not.
@@ -923,7 +947,8 @@ async def sasubackup_command(ctx: discord.ApplicationContext):
             ctx: The slash command context.
 
         Returns:
-            A message indicating wheter the daatabase was backeup or not.
+            A message indicating wheter
+            the daatabase was backeup or not.
     """
     if not await is_authorized(ctx.author):
         await ctx.respond("You are not allowed to use this command.")
