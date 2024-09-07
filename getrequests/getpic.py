@@ -58,6 +58,7 @@ async def get_country(user):
             players = data["response"]["players"]
             if len(players) > 0 and "loccountrycode" in players[0]:
                 country_code = players[0]["loccountrycode"]
+
                 def country_code_to_flag(country_code):
                     country_code = country_code.upper()
                     flag = "".join(
