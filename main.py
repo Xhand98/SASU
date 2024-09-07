@@ -886,21 +886,21 @@ async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Mem
 
 @bot.slash_command(name="sasubackup", description="Backs up database.")
 async def sasubackup_command(ctx: discord.ApplicationContext):
+    """
+        Unban a user from using the bot.
 
+        Args:
+            ctx: The slash command context.
+            discordid: The Discord ID of the user to unban.
+
+        Returns:
+            A message indicating whether the user was unbanned or not.
+    """
     if not await is_authorized(ctx.author):
         await ctx.respond("You are not allowed to use this command.")
         return
 
-    """
-    Unban a user from using the bot.
 
-    Args:
-        ctx: The slash command context.
-        discordid: The Discord ID of the user to unban.
-
-    Returns:
-        A message indicating whether the user was unbanned or not.
-    """
     try:
         await ctx.defer()
         db = Dbm(db_path="db/users.db")
