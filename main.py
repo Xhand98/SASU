@@ -872,7 +872,6 @@ async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Mem
         await ctx.respond("You are not allowed to use this command.")
         return
 
-
     try:
         await ctx.defer()
         db = Dbm(db_path="db/users.db")
