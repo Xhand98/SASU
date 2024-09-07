@@ -76,7 +76,7 @@ def create_embed_tables(embed: discord.Embed, tables: list, default_inline=True)
         for obj in tables:
             if len(obj) == 6 and isinstance(obj[5], str):
                 embed.add_field(
-                    name=f"Steam Info",
+                    name="Steam Info",
                     value=f"ID: {obj[0]}\nSteam ID: {obj[1]}\nUser: {obj[3]}\nCreated: {obj[4]}\nUpdated: {obj[5]}",
                     inline=default_inline,
                 )

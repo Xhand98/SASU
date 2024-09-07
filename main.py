@@ -201,7 +201,7 @@ async def gethours_command(
             else:
                 await ctx.respond(f"Couldn't find hours for SteamID {steamid}.")
         else:
-            await ctx.respond(f"Invalid SteamID or user not found.")
+            await ctx.respond("Invalid SteamID or user not found.")
     except Exception as e:
         await ctx.respond(f"An error occurred while processing your request {e}.")
 
@@ -303,7 +303,7 @@ async def getgames_command(
                 f"Couldn't find the number of games for SteamID {steamid}."
             )
     else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        await ctx.respond("Invalid SteamID or user not found.")
 
 
 @bot.slash_command(name="getpfp", description="Get the profile picture of a user.")
@@ -332,7 +332,7 @@ async def getpfp_command(
         else:
             await ctx.respond(f"Couldn't find profile picture for SteamID {steamid}.")
     else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        await ctx.respond("Invalid SteamID or user not found.")
 
 
 @bot.slash_command(name="getlink", description="Get the link to a user's profile.")
@@ -371,7 +371,7 @@ async def getlink_command(
         else:
             await ctx.respond(f"Couldn't find profile link for SteamID {steamid}.")
     else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        await ctx.respond("Invalid SteamID or user not found.")
 
 
 @bot.slash_command(name="getlevel", description="Get the level of a user.")
@@ -410,7 +410,7 @@ async def getlevel_command(
         else:
             await ctx.respond(f"Couldn't find the level for SteamID {steamid}.")
     else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        await ctx.respond("Invalid SteamID or user not found.")
 
 
 @bot.slash_command(name="getbadges", description="Get the number of badges a user has.")
@@ -448,7 +448,7 @@ async def getbadges_command(
         else:
             await ctx.respond(f"Couldn't find the badges for SteamID {steamid}.")
     else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        await ctx.respond("Invalid SteamID or user not found.")
 
 
 @bot.slash_command(name="getcountry", description="Get the country of a user.")
@@ -486,7 +486,7 @@ async def getcountry_command(
         else:
             await ctx.respond(f"Couldn't find the country for SteamID {steamid}.")
     else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        await ctx.respond("Invalid SteamID or user not found.")
 
 
 @bot.slash_command(name="getuser", description="Get a preview of a user's profile.")
@@ -610,7 +610,7 @@ async def getlatestgame_command(
         else:
             await ctx.respond(f"Couldn't find the latest game for SteamID {steamid}.")
     else:
-        await ctx.respond(f"Invalid SteamID or user not found.")
+        await ctx.respond("Invalid SteamID or user not found.")
 
 
 @bot.slash_command(
@@ -650,7 +650,7 @@ async def getachievements_command(
             result.set_author(name=bot.user.name, icon_url=bot.user.avatar)
             await ctx.respond(embed=result)
         else:
-            await ctx.respond(f"Couldn't find your achievements.")
+            await ctx.respond("Couldn't find your achievements.")
     else:
         await ctx.respond("Your SteamID is not linked.")
 
@@ -674,7 +674,7 @@ async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None 
         await ctx.respond(f"Your SteamID {steamid} has been linked to {ctx.author}.")
     else:
         await ctx.respond(
-            f"If you want to setup the bot to work without putting the input, write </tutorial:1275183733116370950>."
+            "If you want to setup the bot to work without putting the input, write </tutorial:1275183733116370950>."
         )
 
 
@@ -837,7 +837,7 @@ async def sasuban_command(ctx: discord.ApplicationContext, member: discord.Membe
         db.connect()
         db.ban(member.id)
         db.close()
-        await ctx.respond(f"Banned user!")
+        await ctx.respond("Banned user!")
     except Exception as e:
         await ctx.respond(f"An error ocurred: {e}")
 
@@ -882,7 +882,7 @@ async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Mem
         db.connect()
         db.unban(member.id)
         db.close()
-        await ctx.respond(f"Unbanned user!")
+        await ctx.respond("Unbanned user!")
     except Exception as e:
         await ctx.respond(f"An error ocurred: {e}")
 
@@ -910,7 +910,7 @@ async def sasubackup_command(ctx: discord.ApplicationContext):
         db.connect()
         db.backup_database()
         db.close()
-        await ctx.respond(f"The database has been backed up!")
+        await ctx.respond("The database has been backed up!")
     except Exception as e:
         await ctx.respond(f"An error ocurred: {e}")
 
