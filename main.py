@@ -858,21 +858,21 @@ async def isbanned_command(ctx: discord.ApplicationContext, member: discord.Memb
 
 @bot.slash_command(name="sasuunban", description="Unbans user from using the bot.")
 async def sasuunban_command(ctx: discord.ApplicationContext, member: discord.Member):
-
-    # if not is_authorized(ctx.author):
-    #     await ctx.respond("You are not allowed to use this command.")
-    #     return
-
     """
-    Unban a user from using the bot.
+        Unban a user from using the bot.
 
-    Args:
-        ctx: The slash command context.
-        member: The member to unban from using the bot.
+        Args:
+            ctx: The slash command context.
+            member: The member to unban from using the bot.
 
-    Returns:
-        A message indicating whether the user was unbanned or not.
+        Returns:
+            A message indicating whether the user was unbanned or not.
     """
+    if not is_authorized(ctx.author):
+        await ctx.respond("You are not allowed to use this command.")
+        return
+
+
     try:
         await ctx.defer()
         db = Dbm(db_path="db/users.db")
