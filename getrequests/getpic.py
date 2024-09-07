@@ -37,7 +37,6 @@ async def personaname(user):
 async def link(user):
     api_key = os.getenv("STEAM_API_KEY")
 
-
     url = f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
 
     async with aiohttp.ClientSession() as session:
