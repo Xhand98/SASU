@@ -70,12 +70,8 @@ class DatabaseManager:
                 steam_id,
                 discord_id,
                 steam_username,
-                str(
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                ),  # created_at
-                str(
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                ),  # updated_at
+                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),  # created_at
+                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),  # updated_at
             ),
         )
 

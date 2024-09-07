@@ -616,6 +616,7 @@ async def getlatestgame_command(
     else:
         await ctx.respond(f"Invalid SteamID or user not found.")
 
+
 @bot.slash_command(
     name="getachievements",
     description="Gets the number of achievements a player has unlocked.",
@@ -686,7 +687,6 @@ async def showinfo_command(ctx: discord.ApplicationContext):
     """Shows information for the user, such as their SteamID and whether their Steam account is linked with the bot."""
 
     await ctx.defer()
-
 
     try:
         discordid = str(ctx.author.id)
