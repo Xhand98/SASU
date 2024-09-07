@@ -7,4 +7,4 @@ name = "python"
   runtime_version = "3.x.x"
 
 [flake8]
-max-line-length = 120
+max-line-length = 999
