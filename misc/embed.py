@@ -13,6 +13,46 @@ def create_embed(
     thumbnail: str = None,
     em_timestamp: datetime.datetime = None,
 ):
+    """
+    Creates a discord embed with given parameters.
+
+    Parameters
+    ----------
+    em_title : str
+        The title of the embed.
+    em_description : str
+        The description of the embed.
+    em_color : discord.Color
+        The color of the embed.
+    author : tuple, optional
+        The author of the embed. If not None, should be a tuple of (name, icon_url).
+    footer : tuple, optional
+        The footer of the embed. If not None, should be a tuple of (text, icon_url).
+    tables : list, optional
+        The tables to add to the embed. If not None, should be a list of tuples.
+    image : str, optional
+        The image to add to the embed. If not None, should be a URL.
+    thumbnail : str, optional
+        The thumbnail to add to the embed. If not None, should be a URL.
+    em_timestamp : datetime.datetime, optional
+        The timestamp for the embed. If not None, should be a datetime object.
+
+    Returns
+    -------
+    discord.Embed
+        The created embed.
+
+    Raises
+    ------
+    ValueError
+        If any of the parameters are invalid.
+    IndexError
+        If any of the parameters are out of range.
+    TypeError
+        If any of the parameters are of the wrong type.
+    discord.errors.HTTPException
+        If there is an error when setting any of the embed fields.
+    """
     Embed: discord.Embed = discord.Embed(
         title=em_title,
         description=em_description,
@@ -65,6 +105,37 @@ def create_embed(
 
 
 def create_embed_tables(embed: discord.Embed, tables: list, default_inline=True):
+    """
+    Adds fields to an embed based on a list of tables.
+
+    Parameters
+    ----------
+    embed : discord.Embed
+        The embed to add fields to.
+    tables : list
+        A list of tuples containing the data to add to the embed.
+        Each tuple should have the following structure:
+
+        - len(obj) == 6:
+            - obj[0]: The ID of the user.
+            - obj[1]: The Steam ID of the user.
+            - obj[2]: The username of the user.
+            - obj[3]: The created date of the user.
+            - obj[4]: The updated date of the user.
+            - obj[5]: The updated date of the user as a string.
+        - len(obj) == 5:
+            - obj[0]: The ID of the user.
+            - obj[1]: The Discord ID of the user.
+            - obj[2]: The username of the user.
+            - obj[3]: The created date of the user.
+            - obj[4]: The updated date of the user.
+    default_inline : bool
+        Whether the fields should be inline or not. Defaults to True.
+
+    Returns
+    -------
+    None
+    """
     try:
         if not tables:
             print("No data to add to the embed.")

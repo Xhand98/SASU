@@ -3,6 +3,18 @@ import os
 
 
 async def ejecutar(user):
+    """
+    Gets the icon URL of the last game played by a Steam user.
+
+    Args:
+        user: The SteamID of the user to get the last game played of.
+
+    Returns:
+        The icon URL of the last game played 
+        by the user if the request is
+        successful, otherwise None.
+    """
+    
     api_key = os.getenv("STEAM_API_KEY")
     code = None
 

@@ -164,6 +164,11 @@ async def verify_banned(ctx: discord.ApplicationContext):
 # region ON READY
 @bot.event
 async def on_ready():
+    """Called when the bot is ready.
+
+    Prints a message indicating that the bot is ready and
+    sets the bot's `before_invoke` event to `verify_banned`.
+    """
     print(f"{bot.user} is ready and online!")
     bot.before_invoke(verify_banned)
 
@@ -318,6 +323,17 @@ async def getgames_command(
 async def getpfp_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Gets the profile picture of a user.
+
+    Args:
+        ctx: The interaction object.
+        steamid: The SteamID of the user to get the profile picture of.
+        If not provided, the SteamID of the user running the command is used.
+
+    Returns:
+        None
+    """
     await ctx.defer()
     if steamid is None:
         steamid = await get_steamid_from_db(str(ctx.author.id))
@@ -508,6 +524,19 @@ async def getcountry_command(
 async def getuser_command(
     ctx: discord.ApplicationContext, *, steamid: str | None = None
 ):
+    """
+    Gets a preview of a user's Steam profile.
+
+    Args:
+        ctx (discord.ApplicationContext): The interaction context.
+        steamid (str | None, optional): The SteamID of the user to get the
+            profile of. Defaults to None.
+
+    Returns:
+        discord.InteractionMessage: The interaction message containing the
+            user's profile preview.
+    """
+    
     await ctx.defer()
     try:
         if steamid is None:
@@ -678,6 +707,14 @@ async def getachievements_command(
 
 @bot.slash_command(name="setup", description="Sets up user for the use of the bot.")
 async def setup_command(ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    """Sets up user for the use of the bot.
+
+    Args:
+        ctx (discord.ApplicationContext): The context of the slash command.
+        steamid (str | None): The SteamID of the user to link to the Discord
+            account. If None, the command will respond with a tutorial on how
+            to link the SteamID without providing it.
+    """
     await ctx.defer()
     if steamid:
         steamid = await process_user_or_steamid(steamid)

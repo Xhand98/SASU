@@ -3,6 +3,14 @@ import os
 
 
 async def ejecutar(user):
+    """Fetches the avatar URL of a Steam user from their SteamID.
+
+    Args:
+        user: The SteamID of the user to fetch the avatar URL of.
+
+    Returns:
+        The avatar URL of the user, or None if an error occurred.
+    """
     api_key = os.getenv("STEAM_API_KEY")
 
     url = (f"https://api.steampowered.com/ISteamUser/"
@@ -19,6 +27,14 @@ async def ejecutar(user):
 
 
 async def personaname(user):
+    """Fetches the username of a Steam user from their SteamID.
+
+    Args:
+        user: The SteamID of the user to fetch the username of.
+
+    Returns:
+        The username of the user if the request is successful, otherwise None.
+    """
     api_key = os.getenv("STEAM_API_KEY")
 
     url = (f"https://api.steampowered.com/ISteamUser/GetPlayer"
@@ -35,6 +51,14 @@ async def personaname(user):
 
 
 async def link(user):
+    """Fetches the profile URL of a Steam user from their SteamID.
+
+    Args:
+        user: The SteamID of the user to fetch the profile URL of.
+
+    Returns:
+        The profile URL of the user if the request is successful, otherwise None.
+    """
     api_key = os.getenv("STEAM_API_KEY")
 
     url = (f"https://api.steampowered.com/ISteamUser/"
@@ -51,6 +75,14 @@ async def link(user):
 
 
 async def get_country(user):
+    """Fetches the country code of a Steam user from their SteamID.
+
+    Args:
+        user: The SteamID of the user to fetch the country code of.
+
+    Returns:
+        The country code of the user if the request is successful, otherwise None.
+    """
     api_key = os.getenv("STEAM_API_KEY")
 
     url = (f"https://api.steampowered.com/ISteamUser/"
@@ -64,6 +96,15 @@ async def get_country(user):
                 country_code = players[0]["loccountrycode"]
 
                 def country_code_to_flag(country_code):
+                    """
+                        Converts a country code (like "US" or "GB") to an emoji flag.
+
+                        Args:
+                            country_code: The country code to convert.
+
+                        Returns:
+                            The country code as an emoji flag, or None if the country code is not valid.
+                    """
                     country_code = country_code.upper()
                     flag = "".join(
                         chr(0x1F1E6 + ord(char) - ord("A")) for char in country_code

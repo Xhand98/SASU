@@ -3,6 +3,17 @@ import os
 
 
 async def ejecutar(user):
+    """
+    Gets the number of games a Steam user owns.
+
+    Args:
+        user: The SteamID of the user to get the number of games for.
+
+    Returns:
+        The number of games owned by the user if the request
+        is successful, otherwise None.
+    """
+    
     api_key = os.getenv("STEAM_API_KEY")
     steamid = user
 

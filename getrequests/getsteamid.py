@@ -3,6 +3,15 @@ import os
 
 
 async def ejecutar(user):
+    """
+    Resolve a Steam vanity URL to a SteamID.
+
+    Args:
+        user: The vanity URL of the user to resolve.
+
+    Returns:
+        The SteamID of the resolved user, or None if an error occurred.
+    """
     api_key = os.getenv("STEAM_API_KEY")
     steamuser = user
 

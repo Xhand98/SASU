@@ -3,6 +3,15 @@ import os
 
 
 async def ejecutar(user):
+    """
+    Gets the level of a Steam user.
+
+    Args:
+        user: The SteamID of the user to get the level of.
+
+    Returns:
+        The level of the user if the request is successful, otherwise None.
+    """
     api_key = os.getenv("STEAM_API_KEY")
 
     url: str = (f"https://api.steampowered.com/IPlayerService/GetBadges/v1/"

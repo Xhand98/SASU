@@ -6,12 +6,36 @@ client = httpx.AsyncClient()
 
 
 async def fetch_data(url, params=None):
+    """
+    Fetches JSON data from a given Steam Web API URL.
+
+    Args:
+        url: The URL of the Steam Web API to fetch data from.
+        params: Optional parameters to include in the request.
+
+    Returns:
+        The JSON data returned by the API endpoint.
+
+    Raises:
+        httpx.HTTPStatusError: If the response was unsuccessful.
+    """
+    
     response = await client.get(url, params=params)
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()
 
 
 async def get_hours(user):
+    """
+    Gets the total hours a user has played across all of their games.
+
+    Args:
+        user: The SteamID of the user to get the total hours for.
+
+    Returns:
+        The total hours played by the user, or 0 if the response is unsuccessful.
+    """
+    
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/"
     params = {
@@ -30,6 +54,16 @@ async def get_hours(user):
 
 
 async def get_steamid(user):
+    """
+    Resolve a Steam vanity URL to a SteamID.
+
+    Args:
+        user: The vanity URL of the user to resolve.
+
+    Returns:
+        The SteamID of the resolved user, or None if an error occurred.
+    """
+    
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/"
     params = {"key": api_key, "vanityurl": user}
@@ -39,6 +73,16 @@ async def get_steamid(user):
 
 
 async def get_games(user):
+    """
+    Gets the number of games a user owns.
+
+    Args:
+        user: The SteamID of the user to get the number of games for.
+
+    Returns:
+        The number of games the user owns, or 0 if an error occurred.
+    """
+    
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/"
     params = {"key": api_key, "steamid": user, "include_appinfo": 1}
@@ -48,6 +92,18 @@ async def get_games(user):
 
 
 async def get_pic(user):
+    """
+    Fetches the avatar URL, profile URL, and username of a Steam user from their SteamID.
+
+    Args:
+        user: The SteamID of the user to fetch the info of.
+
+    Returns:
+        A dictionary containing the avatar URL, profile URL, 
+        and username of the user if the request is successful, 
+        otherwise None.
+    """
+
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?"
     params = {"key": api_key, "steamids": user}

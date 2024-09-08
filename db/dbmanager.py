@@ -31,21 +31,94 @@ class DatabaseManager:
     """
 
     def __init__(self, db_path):
+        """
+        Initializes a DatabaseManager object.
+        self.db_path = db_path
+        Parameters
+        ----------
+        db_path : str
+            The path to the database file.
+
+        Attributes
+        ----------
+        self.db_path : str
+            The path to the database file.
+        self.conn : sqlite3.Connection | None
+            The SQLite connection object.
+        self.db : NewSimpleSQL.SimpleSQLite.Database | None
+            The database object.
+        """
         self.db_path = db_path
         self.conn = None
         self.db = None
 
     def connect(self):
+        """
+        Establishes a connection to the database.
+
+        Returns
+        -------
+        None
+        """
+        
         self.conn = sqlite3.connect(self.db_path)
         self.db = Database(self.conn)
 
     def close(self):
+        """
+        Closes the database connection.
+
+        Returns
+        -------
+        None
+        """
+
         self.db.close()
 
     def get_discord(self):
+        """
+        Retrieves Discord user data.
+
+        Returns
+        -------
+        list
+            A list of tuples containing the Discord ID, username, created_at, and
+            updated_at for each user in the database.
+        """
         self.db.simple_select_data("discord_users", "*")
 
     def create_tables(self):
+        """
+        Creates necessary tables in the database.
+
+        The tables created are:
+            - discord_users
+            - steam_accounts
+            - blacklist
+
+        discord_users contains the following columns:
+            - id (auto-incrementing primary key)
+            - discord_id (NOT NULL, string)
+            - discord_username (NOT NULL, string)
+            - created_at (string)
+            - updated_at (string)
+
+        steam_accounts contains the following columns:
+            - id (auto-incrementing primary key)
+            - discord_user_id (NOT NULL, integer, foreign key to discord_users)
+            - steam_id (NOT NULL, integer)
+            - steam_username (NOT NULL, string)
+            - created_at (string)
+            - updated_at (string)
+
+        blacklist contains the following columns:
+            - id (auto-incrementing primary key)
+            - discord_id (NOT NULL, string, foreign key to discord_users)
+
+        The foreign key constraints ensure that a steam account is linked to a
+        discord user, and that a discord user is not banned if they are not in the
+        discord_users table.
+        """
         structure1 = {
             "name": "discord_users",
             "columns": {
@@ -89,6 +162,21 @@ class DatabaseManager:
         self, discord_id: int, steam_id: int, steam_username: str, discord_username: str
     ):
         # Insert data into steam_accounts table
+        """
+        Links a Steam account to a Discord user.
+
+        Parameters
+        ----------
+        discord_id : int
+            The Discord ID of the user to link.
+        steam_id : int
+            The Steam ID of the account to link.
+        steam_username : str
+            The username of the Steam account to link.
+        discord_username : str
+            The username of the Discord user to link.
+        """
+        
         self.db.simple_insert_data(
             "steam_accounts",
             (
@@ -111,6 +199,19 @@ class DatabaseManager:
         )
 
     def get_steam_info(self, discord_id):
+        """
+        Retrieves Steam account information for a Discord user.
+
+        Parameters
+        ----------
+        discord_id : int
+            The Discord ID of the user to retrieve information for
+
+        Returns
+        -------
+        list
+            A list of dictionaries containing the user's Steam account info
+        """
         tables = [
             {
                 "name": "steam_accounts",
@@ -129,12 +230,35 @@ class DatabaseManager:
         return data
 
     def ban(self, discord_id: int):
+        """
+        Bans a Discord user from using the bot
+
+        Parameters
+        ----------
+        discord_id : int
+            The Discord ID of the user to ban
+        """
+
         self.db.simple_insert_data(
             "blacklist",
             (discord_id, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))),
         )
 
     def isbanned(self, discord_id: int):
+        """
+        Checks if a Discord user is banned from using the bot
+
+        Parameters
+        ----------
+        discord_id : int
+            The Discord ID of the user
+
+        Returns
+        -------
+        bool
+            True if the user is banned, False otherwise
+        """
+
         if self.db.simple_select_data(
             "blacklist", "discord_id", f"WHERE discord_id = '{discord_id}'"
         ):
@@ -142,10 +266,35 @@ class DatabaseManager:
         return False
 
     def unban(self, discord_id):
+        """
+        Unbans a Discord user from using the bot.
+
+        Parameters
+        ----------
+        discord_id : int
+            The Discord ID of the user to unban.
+
+        Returns
+        -------
+        str
+            A success message if the user is unbanned successfully.
+        """
         self.db.simple_delete_data("blacklist", f"discord_id = '{discord_id}'")
         return "User is now unbanned"
 
     def run_custom_query(self, query):
+        """
+        Executes a custom SQL query.
+
+        Parameters
+        ----------
+        query : str
+            The SQL query to execute.
+
+        Returns
+        -------
+        None
+        """
         self.db.custom_execute(query)
 
     def update_user_info(self, discord_id, new_username, date):
@@ -176,6 +325,13 @@ class DatabaseManager:
             db.close()
 
     def backup_database(self):
+        """
+        Creates a backup of the database file in the ./db/backup directory.
+        
+        The filename of the backup is in the format "YYYYMMDD_HHMMSS_backup.db",
+        where the timestamp is the current local time when this function is called.
+        """
+        
         file = self.db_path
         time = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_dir = "./db/backup"

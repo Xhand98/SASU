@@ -11,6 +11,19 @@ API_KEY = os.getenv("STEAM_API_KEY")
 
 # Helper function to fetch JSON data
 async def fetch_json(session, url):
+    """Fetches JSON data from the given URL using the given session.
+
+    Args:
+        session: The aiohttp.ClientSession to use for the request.
+        url: The URL of the JSON data to fetch.
+
+    Returns:
+        The JSON data returned by the API endpoint.
+
+    Raises:
+        ValueError: If the response body is not valid JSON.
+    """
+    
     async with session.get(url) as response:
         try:
             data = await response.json()
@@ -22,6 +35,21 @@ async def fetch_json(session, url):
 
 # Get Achievements
 async def get_achievements(session, app_id, steam_id, api):
+    """Fetches the achievements of a user for a specific game.
+
+    Args:
+        session: The aiohttp.ClientSession to use for the request.
+        app_id: The Steam App ID of the game to fetch achievements for.
+        steam_id: The Steam ID of the user to fetch achievements for.
+        api: The Steam Web API key to use for the request.
+
+    Returns:
+        The JSON data returned by the API endpoint.
+
+    Raises:
+        ValueError: If the response body is not valid JSON.
+    """
+    
     url = (f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/"
            f"?appid={app_id}"
            f"&key={api}"
@@ -32,6 +60,16 @@ async def get_achievements(session, app_id, steam_id, api):
 
 # Get Player Games
 async def get_player_games(session, steam_id):
+    """Fetches the games of a user and their unlocked achievements.
+
+    Args:
+        session: The aiohttp.ClientSession to use for the request.
+        steam_id: The Steam ID of the user to fetch games and achievements for.
+
+    Returns:
+        The total number of unlocked achievements across all games.
+    """
+    
     url = (f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/"
            f"?key={API_KEY}"
            f"&steamid={steam_id}"
@@ -58,6 +96,20 @@ async def get_player_games(session, steam_id):
 
 # Helper function to fetch achievements for a specific game
 async def fetch_achievements_for_game(session, app_id, steam_id):
+    """Fetches the unlocked achievements for a specific game of a user.
+
+    Args:
+        session: The aiohttp.ClientSession to use for the request.
+        app_id: The Steam App ID of the game to fetch achievements for.
+        steam_id: The Steam ID of the user to fetch achievements for.
+
+    Returns:
+        A list of the unlocked achievements for the game.
+
+    Raises:
+        ValueError: If the response body is not valid JSON.
+    """
+    
     achievements = await get_achievements(session, app_id, steam_id, API_KEY)
     print(f"Game {app_id}: {achievements}")  # Debugging line
     if "playerstats" in achievements and "achievements" in achievements["playerstats"]:
@@ -71,6 +123,20 @@ async def fetch_achievements_for_game(session, app_id, steam_id):
 
 # Processing Data
 async def process_data(session, steam_id):
+    """Fetches the number of unlocked achievements of a user.
+
+    Args:
+        session: The aiohttp.ClientSession to use for the request.
+        steam_id: The Steam ID of the user to fetch achievements for.
+
+    Returns:
+        The number of unlocked achievements of the user if the request is successful,
+        otherwise a string with an error message.
+
+    Raises:
+        ValueError: If the response body is not valid JSON.
+    """
+
     try:
         unlocked_achievement_count = await get_player_games(session, steam_id)
         if unlocked_achievement_count == 0:
@@ -82,6 +148,20 @@ async def process_data(session, steam_id):
 
 # Example usage
 async def main(steam_id):
+    """Example usage of the getachievements module.
+
+    This function demonstrates how to use the 
+    getachievements module to fetch the
+    number of unlocked achievements of a Steam user.
+
+    Args:
+        steam_id: The Steam ID of the user to fetch achievements for.
+
+    Returns:
+        The number of unlocked achievements of 
+        the user if the request is successful,
+        otherwise a string with an error message.
+    """
     async with aiohttp.ClientSession() as session:
         result = await process_data(session, steam_id)
         print(result)

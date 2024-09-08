@@ -6,6 +6,16 @@ load_dotenv()
 
 
 async def get_levels(user):
+    """
+    Gets the level of a Steam user.
+
+    Args:
+        user: The SteamID of the user to get the level of.
+
+    Returns:
+        The level of the user if the request is successful, otherwise None.
+    """
+    
     api_key = os.getenv("STEAM_API_KEY")
     steamuser = user
 
@@ -28,6 +38,17 @@ async def get_levels(user):
 
 
 async def get_badges(user):
+    """
+    Gets the number of badges a Steam user has.
+
+    Args:
+        user: The SteamID of the user to get the number of badges of.
+
+    Returns:
+        The number of badges the user has if the request is successful, otherwise None.
+    """
+    
+
     api_key = os.getenv("STEAM_API_KEY")
     steamuser = user
 

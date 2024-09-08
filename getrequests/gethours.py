@@ -3,6 +3,17 @@ import os
 
 
 async def ejecutar(user):
+    """
+    Gets the total hours of a Steam user across all of their games.
+
+    Args:
+        user: The SteamID of the user to get the total hours for.
+
+    Returns:
+        The total hours played by the user if the request 
+        is successful, otherwise None.
+    """
+    
     api_key = os.getenv("STEAM_API_KEY")
     steam_id = user
 
