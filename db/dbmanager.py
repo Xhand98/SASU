@@ -341,16 +341,4 @@ class DatabaseManager:
             db.commit()
             db.close()
 
-    def backup_database(self):
-        """
-        Creates a backup of the database file in the ./db/backup directory.
-
-        The filename of the backup is in the format "YYYYMMDD_HHMMSS_backup.db",
-        where the timestamp is the current local time when this function is called.
-        """
-        file = self.db_path
-        time = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_dir = "./db/backup"
-        changed_name = os.path.join(backup_dir, f"{time}_backup.db")
-        shutil.copy(file, changed_name)
-        print(f"Backup created: {changed_name}")
+    
