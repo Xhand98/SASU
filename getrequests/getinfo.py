@@ -89,7 +89,8 @@ async def get_games(user):
 
 async def get_pic(user):
     """
-    Fetches the avatar URL, profile URL, and username of a Steam user from their SteamID.
+    Fetches the avatar URL, profile URL, and username of
+    a Steam user from their SteamID.
 
     Args:
         user: The SteamID of the user to fetch the info of.
