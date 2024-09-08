@@ -536,7 +536,6 @@ async def getuser_command(
         discord.InteractionMessage: The interaction message containing the
             user's profile preview.
     """
-    
     await ctx.defer()
     try:
         if steamid is None:
