@@ -171,18 +171,18 @@ async def get_country(user):
     player = data.get("response", {}).get("players", [{}])[0]
     country_code = player.get("loccountrycode", "")
 
-    def country_code_to_flag(country_code):
+    def country_code_to_flag(cc):
         """
         Converts a country code (like "US" or "GB") to an emoji flag.
 
         Args:
-            country_code: The country code to convert.
+            cc: The country code to convert.
 
         Returns:
             The country code as an emoji flag, or None if the country code is not valid.
         """
-        country_code = country_code.upper()
-        return "".join(chr(0x1F1E6 + ord(char) - ord("A")) for char in country_code)
+        code = cc.upper()
+        return "".join(chr(0x1F1E6 + ord(char) - ord("A")) for char in code)
 
     return country_code_to_flag(country_code) if country_code else "No flag/bandera"
 

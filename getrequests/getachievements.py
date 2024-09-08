@@ -48,7 +48,7 @@ async def get_achievements(session, app_id, steam_id, api):
     Raises:
         ValueError: If the response body is not valid JSON.
     """
-    url = (f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/"
+    url = (f"https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/"
            f"?appid={app_id}"
            f"&key={api}"
            f"&steamid={steam_id}")

@@ -201,7 +201,7 @@ class DatabaseManager:
 
         Parameters
         ----------
-        discord_id : int
+        discord_id : str
             The Discord ID of the user to retrieve information for
 
         Returns

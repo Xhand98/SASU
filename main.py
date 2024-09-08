@@ -59,7 +59,7 @@ async def get_steamid_from_db(discord_id: str):
 
     Parameters
     ----------
-    discord_id : int
+    discord_id : str
         The Discord ID of the user to get the SteamID for
 
     Returns

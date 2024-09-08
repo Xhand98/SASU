@@ -15,7 +15,6 @@ async def ejecutar(user):
         successful, otherwise None.
     """
     api_key = os.getenv("STEAM_API_KEY")
-    code = None
 
     url = (f"https://api.steampowered.com/IPlayerService/"
            f"GetRecentlyPlayedGames/v1/?key={api_key}&steamid={user}")
