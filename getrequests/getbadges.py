@@ -15,7 +15,6 @@ async def get_levels(user):
     Returns:
         The level of the user if the request is successful, otherwise None.
     """
-    
     api_key = os.getenv("STEAM_API_KEY")
     steamuser = user
 
@@ -47,8 +46,6 @@ async def get_badges(user):
     Returns:
         The number of badges the user has if the request is successful, otherwise None.
     """
-    
-
     api_key = os.getenv("STEAM_API_KEY")
     steamuser = user
 

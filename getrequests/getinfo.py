@@ -19,7 +19,6 @@ async def fetch_data(url, params=None):
     Raises:
         httpx.HTTPStatusError: If the response was unsuccessful.
     """
-    
     response = await client.get(url, params=params)
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()
@@ -35,7 +34,6 @@ async def get_hours(user):
     Returns:
         The total hours played by the user, or 0 if the response is unsuccessful.
     """
-    
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/"
     params = {
@@ -63,7 +61,6 @@ async def get_steamid(user):
     Returns:
         The SteamID of the resolved user, or None if an error occurred.
     """
-    
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/"
     params = {"key": api_key, "vanityurl": user}
@@ -82,7 +79,6 @@ async def get_games(user):
     Returns:
         The number of games the user owns, or 0 if an error occurred.
     """
-    
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/"
     params = {"key": api_key, "steamid": user, "include_appinfo": 1}
@@ -103,7 +99,6 @@ async def get_pic(user):
         and username of the user if the request is successful, 
         otherwise None.
     """
-
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?"
     params = {"key": api_key, "steamids": user}
@@ -122,6 +117,15 @@ async def get_pic(user):
 
 
 async def get_level(user):
+    """
+    Gets the level of a Steam user.
+
+    Args:
+        user: The SteamID of the user to get the level of.
+
+    Returns:
+        The level of the user if the request is successful, otherwise None.
+    """
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/IPlayerService/GetBadges/v1/"
     params = {"key": api_key, "steamid": user}
@@ -131,6 +135,15 @@ async def get_level(user):
 
 
 async def get_badges(user):
+    """
+    Gets the number of Steam badges a user has.
+
+    Args:
+        user: The SteamID of the user to get the number of badges for.
+
+    Returns:
+        The number of badges the user has, or 0 if an error occurred.
+    """
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/IPlayerService/GetBadges/v1/"
     params = {"key": api_key, "steamid": user}
@@ -140,6 +153,15 @@ async def get_badges(user):
 
 
 async def get_country(user):
+    """
+    Fetches the country code of a Steam user from their SteamID.
+
+    Args:
+        user: The SteamID of the user to fetch the country code of.
+
+    Returns:
+        The country code of the user if the request is successful, otherwise None.
+    """
     api_key = os.getenv("STEAM_API_KEY")
     url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/"
     params = {"key": api_key, "steamids": user}
@@ -149,6 +171,15 @@ async def get_country(user):
     country_code = player.get("loccountrycode", "")
 
     def country_code_to_flag(country_code):
+        """
+        Converts a country code (like "US" or "GB") to an emoji flag.
+
+        Args:
+            country_code: The country code to convert.
+
+        Returns:
+            The country code as an emoji flag, or None if the country code is not valid.
+        """
         country_code = country_code.upper()
         return "".join(chr(0x1F1E6 + ord(char) - ord("A")) for char in country_code)
 

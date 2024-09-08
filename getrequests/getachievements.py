@@ -23,7 +23,6 @@ async def fetch_json(session, url):
     Raises:
         ValueError: If the response body is not valid JSON.
     """
-    
     async with session.get(url) as response:
         try:
             data = await response.json()
@@ -49,7 +48,6 @@ async def get_achievements(session, app_id, steam_id, api):
     Raises:
         ValueError: If the response body is not valid JSON.
     """
-    
     url = (f"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/"
            f"?appid={app_id}"
            f"&key={api}"
@@ -69,7 +67,6 @@ async def get_player_games(session, steam_id):
     Returns:
         The total number of unlocked achievements across all games.
     """
-    
     url = (f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/"
            f"?key={API_KEY}"
            f"&steamid={steam_id}"
@@ -109,7 +106,6 @@ async def fetch_achievements_for_game(session, app_id, steam_id):
     Raises:
         ValueError: If the response body is not valid JSON.
     """
-    
     achievements = await get_achievements(session, app_id, steam_id, API_KEY)
     print(f"Game {app_id}: {achievements}")  # Debugging line
     if "playerstats" in achievements and "achievements" in achievements["playerstats"]:
@@ -136,7 +132,6 @@ async def process_data(session, steam_id):
     Raises:
         ValueError: If the response body is not valid JSON.
     """
-
     try:
         unlocked_achievement_count = await get_player_games(session, steam_id)
         if unlocked_achievement_count == 0:

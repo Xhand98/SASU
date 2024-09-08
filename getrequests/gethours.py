@@ -13,7 +13,6 @@ async def ejecutar(user):
         The total hours played by the user if the request 
         is successful, otherwise None.
     """
-    
     api_key = os.getenv("STEAM_API_KEY")
     steam_id = user
 

@@ -29,7 +29,6 @@ class DatabaseManager:
         Updates user information.
         backup_database(): Creates a backup of the database.
     """
-
     def __init__(self, db_path):
         """
         Initializes a DatabaseManager object.
@@ -60,7 +59,6 @@ class DatabaseManager:
         -------
         None
         """
-        
         self.conn = sqlite3.connect(self.db_path)
         self.db = Database(self.conn)
 
@@ -72,7 +70,6 @@ class DatabaseManager:
         -------
         None
         """
-
         self.db.close()
 
     def get_discord(self):
@@ -176,7 +173,6 @@ class DatabaseManager:
         discord_username : str
             The username of the Discord user to link.
         """
-        
         self.db.simple_insert_data(
             "steam_accounts",
             (
@@ -238,7 +234,6 @@ class DatabaseManager:
         discord_id : int
             The Discord ID of the user to ban
         """
-
         self.db.simple_insert_data(
             "blacklist",
             (discord_id, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))),
@@ -258,7 +253,6 @@ class DatabaseManager:
         bool
             True if the user is banned, False otherwise
         """
-
         if self.db.simple_select_data(
             "blacklist", "discord_id", f"WHERE discord_id = '{discord_id}'"
         ):
@@ -331,7 +325,6 @@ class DatabaseManager:
         The filename of the backup is in the format "YYYYMMDD_HHMMSS_backup.db",
         where the timestamp is the current local time when this function is called.
         """
-        
         file = self.db_path
         time = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_dir = "./db/backup"

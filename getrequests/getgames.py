@@ -13,7 +13,6 @@ async def ejecutar(user):
         The number of games owned by the user if the request
         is successful, otherwise None.
     """
-    
     api_key = os.getenv("STEAM_API_KEY")
     steamid = user
 
