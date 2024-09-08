@@ -13,8 +13,10 @@ async def ejecutar(user):
     """
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = (f"https://api.steampowered.com/ISteamUser/"
-           f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}")
+    url = (
+        f"https://api.steampowered.com/ISteamUser/"
+        f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
+    )
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
@@ -37,8 +39,10 @@ async def personaname(user):
     """
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = (f"https://api.steampowered.com/ISteamUser/GetPlayer"
-           f"Summaries/v0002/?key={api_key}&steamids={user}")
+    url = (
+        f"https://api.steampowered.com/ISteamUser/GetPlayer"
+        f"Summaries/v0002/?key={api_key}&steamids={user}"
+    )
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
@@ -61,8 +65,10 @@ async def link(user):
     """
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = (f"https://api.steampowered.com/ISteamUser/"
-           f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}")
+    url = (
+        f"https://api.steampowered.com/ISteamUser/"
+        f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
+    )
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
@@ -85,8 +91,10 @@ async def get_country(user):
     """
     api_key = os.getenv("STEAM_API_KEY")
 
-    url = (f"https://api.steampowered.com/ISteamUser/"
-           f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}")
+    url = (
+        f"https://api.steampowered.com/ISteamUser/"
+        f"GetPlayerSummaries/v0002/?key={api_key}&steamids={user}"
+    )
 
     async with aiohttp.ClientSession() as session, session.get(url) as response:
         if response.status == 200:
@@ -97,19 +105,20 @@ async def get_country(user):
 
                 def country_code_to_flag(country_code):
                     """
-                        Converts a country code (like "US" or "GB") to an emoji flag.
+                    Converts a country code (like "US" or "GB") to an emoji flag.
 
-                        Args:
-                            country_code: The country code to convert.
+                    Args:
+                        country_code: The country code to convert.
 
-                        Returns:
-                            The country code as an emoji flag, or None if the country code is not valid.
+                    Returns:
+                        The country code as an emoji flag, or None if the country code is not valid.
                     """
                     country_code = country_code.upper()
                     flag = "".join(
                         chr(0x1F1E6 + ord(char) - ord("A")) for char in country_code
                     )
                     return flag
+
                 flag = country_code_to_flag(country_code)
             else:
                 flag = "No flag/bandera"
