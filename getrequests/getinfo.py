@@ -96,8 +96,8 @@ async def get_pic(user):
         user: The SteamID of the user to fetch the info of.
 
     Returns:
-        A dictionary containing the avatar URL, profile URL, 
-        and username of the user if the request is successful, 
+        A dictionary containing the avatar URL, profile URL,
+        and username of the user if the request is successful,
         otherwise None.
     """
     api_key = os.getenv("STEAM_API_KEY")

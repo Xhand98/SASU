@@ -10,7 +10,7 @@ async def ejecutar(user):
         user: The SteamID of the user to get the last game played of.
 
     Returns:
-        The icon URL of the last game played 
+        The icon URL of the last game played
         by the user if the request is
         successful, otherwise None.
     """

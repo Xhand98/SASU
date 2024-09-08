@@ -145,7 +145,7 @@ async def process_data(session, steam_id):
 async def main(steam_id):
     """Example usage of the getachievements module.
 
-    This function demonstrates how to use the 
+    This function demonstrates how to use the
     getachievements module to fetch the
     number of unlocked achievements of a Steam user.
 
@@ -153,7 +153,7 @@ async def main(steam_id):
         steam_id: The Steam ID of the user to fetch achievements for.
 
     Returns:
-        The number of unlocked achievements of 
+        The number of unlocked achievements of
         the user if the request is successful,
         otherwise a string with an error message.
     """
