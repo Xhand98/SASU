@@ -183,3 +183,5 @@ old db's/
 backups/
 
 *backup*.db
+
+.idea/
