@@ -344,7 +344,7 @@ class DatabaseManager:
     def backup_database(self):
         """
         Creates a backup of the database file in the ./db/backup directory.
-        
+
         The filename of the backup is in the format "YYYYMMDD_HHMMSS_backup.db",
         where the timestamp is the current local time when this function is called.
         """
