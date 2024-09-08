@@ -111,7 +111,8 @@ async def get_country(user):
                         country_code: The country code to convert.
 
                     Returns:
-                        The country code as an emoji flag, or None if the country code is not valid.
+                        The country code as an emoji flag,
+                        or None if the country code is not valid.
                     """
                     country_code = country_code.upper()
                     flag = "".join(
