@@ -293,6 +293,28 @@ class DatabaseManager:
         self.db.custom_execute(query)
 
     def update_user_info(self, discord_id, new_username, date):
+        """
+        Updates user information in the database.
+
+        Parameters
+        ----------
+        discord_id : int
+            The Discord ID of the user to update.
+        new_username : str
+            The new username of the user.
+        date : str
+            The date to update the user's information (in the format
+            'YYYY-MM-DD HH:MM:SS').
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        Exception
+            If an error occurs during the update.
+        """
         try:
             # Establish a new database connection for this thread
             connection = self.conn

@@ -188,4 +188,9 @@ async def get_country(user):
 
 # Close the client when the application shuts down
 async def close_client():
+    """
+    Closes the aiohttp client session when the application is shutting down.
+
+    This is a necessary step to prevent the application from leaking resources.
+    """
     await client.aclose()
