@@ -5,6 +5,7 @@ from db.db_operations import DatabaseOperations as Dbo
 
 AUTHORIZED_USER_IDS = [543132514848604170, 987654321012345678]
 
+
 def normalize_data(data):
     """
     Ensures all tuples have the same number

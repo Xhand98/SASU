@@ -5,24 +5,36 @@ from discord.ext import commands
 from db.db_operations import DatabaseOperations as Dbo
 from db.dbmanager import DatabaseManager as Dbm
 from misc import embed
-from misc.utils import process_user_or_steamid, check_user, user_info, get_steamh, normalize_data
+from misc.utils import (
+    process_user_or_steamid,
+    check_user,
+    user_info,
+    get_steamh,
+    normalize_data,
+)
 import getrequests.getinfo as getinfo
 import getrequests.getachievements as getachievements
 import getrequests.getgameico as getgameico
 import time
+
 
 class UserCommands(commands.Cog):
     def __init__(self, bot, db_path):
         self.bot = bot
         self.db_operations = Dbo(db_path)
 
-
-    @commands.slash_command(name="gethours", description="Get hours of a Steam user across all its games.")
-    async def gethours_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="gethours", description="Get hours of a Steam user across all its games."
+    )
+    async def gethours_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         try:
             if steamid is None:
-                steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+                steamid = await self.db_operations.get_steamid_from_db(
+                    str(ctx.author.id)
+                )
                 steamid = str(steamid[0][0])
                 steamid = await check_user(steamid, ctx)
             else:
@@ -40,8 +52,12 @@ class UserCommands(commands.Cog):
         except Exception as e:
             await ctx.respond(f"An error occurred while processing your request: {e}")
 
-    @commands.slash_command(name="getsteamid", description="Get the Steam ID of a user.")
-    async def getsteamid_command(self, ctx: discord.ApplicationContext, *, steamurl: str | None = None):
+    @commands.slash_command(
+        name="getsteamid", description="Get the Steam ID of a user."
+    )
+    async def getsteamid_command(
+        self, ctx: discord.ApplicationContext, *, steamurl: str | None = None
+    ):
         await ctx.defer()
         if steamurl is None:
             data = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -53,13 +69,17 @@ class UserCommands(commands.Cog):
                     description=f"{user_name}'s Steam ID is {steamid}",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond("No Steam ID found in the database for your account.")
             return
 
-        match = re.search(r"(?:https?://)?steamcommunity\.com/(?:id|profiles)/([^/]+)", steamurl)
+        match = re.search(
+            r"(?:https?://)?steamcommunity\.com/(?:id|profiles)/([^/]+)", steamurl
+        )
         if match:
             steamid_or_username = match.group(1)
         else:
@@ -75,8 +95,12 @@ class UserCommands(commands.Cog):
         result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
         await ctx.respond(embed=result)
 
-    @commands.slash_command(name="getgames", description="Get the number of all the games a user owns.")
-    async def getgames_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="getgames", description="Get the number of all the games a user owns."
+    )
+    async def getgames_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -93,15 +117,21 @@ class UserCommands(commands.Cog):
                     description=f"{user_name} owns {games} games.",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond("Could not retrieve games.")
         else:
             await ctx.respond("Invalid SteamID or user not found.")
 
-    @commands.slash_command(name="getpfp", description="Get the profile picture of a user.")
-    async def getpfp_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="getpfp", description="Get the profile picture of a user."
+    )
+    async def getpfp_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -118,16 +148,24 @@ class UserCommands(commands.Cog):
                     title=f"{user_name}'s Profile Picture",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 result.set_image(url=avatar)
                 await ctx.respond(embed=result)
             else:
-                await ctx.respond(f"Couldn't find profile picture for SteamID {steamid}.")
+                await ctx.respond(
+                    f"Couldn't find profile picture for SteamID {steamid}."
+                )
         else:
             await ctx.respond("Invalid SteamID or user not found.")
 
-    @commands.slash_command(name="getlink", description="Get the link to a user's profile.")
-    async def getlink_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="getlink", description="Get the link to a user's profile."
+    )
+    async def getlink_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -145,7 +183,9 @@ class UserCommands(commands.Cog):
                     description=f"[Profile Link]({url})",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond(f"Couldn't find profile link for SteamID {steamid}.")
@@ -153,7 +193,9 @@ class UserCommands(commands.Cog):
             await ctx.respond("Invalid SteamID or user not found.")
 
     @commands.slash_command(name="getlevel", description="Get the level of a user.")
-    async def getlevel_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    async def getlevel_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -170,15 +212,21 @@ class UserCommands(commands.Cog):
                     description=f"{user_name} is level {level}.",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond(f"Couldn't find the level for SteamID {steamid}.")
         else:
             await ctx.respond("Invalid SteamID or user not found.")
 
-    @commands.slash_command(name="getbadges", description="Get the number of badges a user has.")
-    async def getbadges_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="getbadges", description="Get the number of badges a user has."
+    )
+    async def getbadges_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -195,7 +243,9 @@ class UserCommands(commands.Cog):
                     description=f"{user_name} has {badges} badges.",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond(f"Couldn't find the badges for SteamID {steamid}.")
@@ -203,7 +253,9 @@ class UserCommands(commands.Cog):
             await ctx.respond("Invalid SteamID or user not found.")
 
     @commands.slash_command(name="getcountry", description="Get the country of a user.")
-    async def getcountry_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    async def getcountry_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -220,21 +272,31 @@ class UserCommands(commands.Cog):
                     description=f"{user_name} is from {country}.",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond(f"Couldn't find the country for SteamID {steamid}.")
         else:
             await ctx.respond("Invalid SteamID or user not found.")
 
-    @commands.slash_command(name="getuser", description="Get a preview of a user's profile.")
-    async def getuser_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="getuser", description="Get a preview of a user's profile."
+    )
+    async def getuser_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         try:
             if steamid is None:
-                steamid_data = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+                steamid_data = await self.db_operations.get_steamid_from_db(
+                    str(ctx.author.id)
+                )
                 if not steamid_data:
-                    await ctx.respond("No SteamID found linked to your Discord account.")
+                    await ctx.respond(
+                        "No SteamID found linked to your Discord account."
+                    )
                     return
                 steamid = str(steamid_data[0][0])
 
@@ -266,7 +328,9 @@ class UserCommands(commands.Cog):
 
             result.add_field(
                 name="Total Hours Played",
-                value=f"{total_hours:.2f} hours" if total_hours else "Private/Unavailable",
+                value=(
+                    f"{total_hours:.2f} hours" if total_hours else "Private/Unavailable"
+                ),
                 inline=True,
             )
             result.add_field(
@@ -291,7 +355,11 @@ class UserCommands(commands.Cog):
             )
             result.add_field(
                 name="Total Achievements",
-                value=f"{user_achievements}" if user_achievements else "Private/Unavailable",
+                value=(
+                    f"{user_achievements}"
+                    if user_achievements
+                    else "Private/Unavailable"
+                ),
                 inline=True,
             )
 
@@ -302,10 +370,16 @@ class UserCommands(commands.Cog):
 
         except Exception as e:
             print(f"Error getting user info: {e}")
-            await ctx.respond("An error occurred while retrieving the user's information.")
+            await ctx.respond(
+                "An error occurred while retrieving the user's information."
+            )
 
-    @commands.slash_command(name="getlatestgame", description="Get Latest game of a user.")
-    async def getlatestgame_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="getlatestgame", description="Get Latest game of a user."
+    )
+    async def getlatestgame_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -321,15 +395,24 @@ class UserCommands(commands.Cog):
                     title=f"{user_name}'s Latest Game", color=discord.Color.random()
                 )
                 result.set_image(url=ico)
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
-                await ctx.respond(f"Couldn't find the latest game for SteamID {steamid}.")
+                await ctx.respond(
+                    f"Couldn't find the latest game for SteamID {steamid}."
+                )
         else:
             await ctx.respond("Invalid SteamID or user not found.")
 
-    @commands.slash_command(name="getachievements", description="Gets the number of achievements a player has unlocked.")
-    async def getachievements_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="getachievements",
+        description="Gets the number of achievements a player has unlocked.",
+    )
+    async def getachievements_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -346,15 +429,21 @@ class UserCommands(commands.Cog):
                     description=f"{user_name} has {achievements} achievements.",
                     color=discord.Color.random(),
                 )
-                result.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+                result.set_author(
+                    name=self.bot.user.name, icon_url=self.bot.user.avatar
+                )
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond("Couldn't find your achievements.")
         else:
             await ctx.respond("Your SteamID is not linked.")
 
-    @commands.slash_command(name="setup", description="Sets up user for the use of the bot.")
-    async def setup_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
+    @commands.slash_command(
+        name="setup", description="Sets up user for the use of the bot."
+    )
+    async def setup_command(
+        self, ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
         await ctx.defer()
         if steamid:
             steamid = await process_user_or_steamid(steamid)
@@ -367,13 +456,17 @@ class UserCommands(commands.Cog):
             discordid = int(discordid)
             steamid = int(steamid)
             db.link_steam_id(discordid, steamid, steam_username, discordname)
-            await ctx.respond(f"Your SteamID {steamid} has been linked to {ctx.author}.")
+            await ctx.respond(
+                f"Your SteamID {steamid} has been linked to {ctx.author}."
+            )
         else:
             await ctx.respond(
                 "If you want to setup the bot to work without putting the input, write </tutorial:1275183733116370950>."
             )
 
-    @commands.slash_command(name="showinfo", description="Shows information for the user.")
+    @commands.slash_command(
+        name="showinfo", description="Shows information for the user."
+    )
     async def showinfo_command(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         try:
@@ -391,7 +484,9 @@ class UserCommands(commands.Cog):
                 else:
                     await ctx.respond(content="No information available to display.")
             else:
-                await ctx.respond(content="You have not linked your Steam account with the bot.")
+                await ctx.respond(
+                    content="You have not linked your Steam account with the bot."
+                )
         except Exception as e:
             print(f"An error occurred: {e}")
             await ctx.respond("An error occurred while processing your request.")
@@ -402,8 +497,13 @@ class UserCommands(commands.Cog):
         await asyncio.sleep(1)
         await ctx.respond("This is a test message.")
 
-    @commands.slash_command(name="tutorial", description="Guide on how to set up your Steam account with the bot.")
-    async def tutorial_command(self, ctx: discord.ApplicationContext, language: str = "en"):
+    @commands.slash_command(
+        name="tutorial",
+        description="Guide on how to set up your Steam account with the bot.",
+    )
+    async def tutorial_command(
+        self, ctx: discord.ApplicationContext, language: str = "en"
+    ):
         await ctx.defer()
         if language.lower() not in ["es", "en"]:
             language = "en"

@@ -4,10 +4,10 @@ import shutil
 from datetime import datetime
 from db.dbmanager import DatabaseManager as Dbm
 
+
 class DatabaseOperations:
     def __init__(self, db_path):
         self.db_path = db_path
-
 
     async def get_steamid_from_db(self, discord_id: str):
         db = Dbm(db_path=self.db_path)
@@ -48,4 +48,5 @@ class DatabaseOperations:
         changed_name = os.path.join(backup_dir, f"{time}_backup.db")
         shutil.copy(file, changed_name)
         print(f"Backup created: {changed_name}")
+
     # Add other database-related methods here
