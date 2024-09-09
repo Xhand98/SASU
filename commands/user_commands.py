@@ -461,7 +461,8 @@ class UserCommands(commands.Cog):
             )
         else:
             await ctx.respond(
-                "If you want to setup the bot to work without putting the input, write </tutorial:1275183733116370950>."
+                "If you want to setup the bot to work "
+                "without putting the input, write </tutorial:1275183733116370950>."
             )
 
     @commands.slash_command(
@@ -537,21 +538,27 @@ class UserCommands(commands.Cog):
                 "your Steam profile. For example:\n"
                 "</gethours:1275183732927758366> - Get total hours played"
                 " across all your games.\n"
-                "</getgames:1275183732927758368> - Get the number of games you own.\n"
+                "</getgames:1275183732927758368> - Get the "
+                "number of games you own.\n"
                 "</getlevel:1275183732927758371> - Get your Steam level.\n"
-                "</getbadges:1275183732927758372> - Get the number of badges you have.\n"
+                "</getbadges:1275183732927758372> - Get the "
+                "number of badges you have.\n"
                 "</getcountry:1275183732927758374> - Get your country.\n"
-                "</getuser:1275183732927758375> - Get a preview of your Steam profile.\n"
-                "</getlatestgame:1275183733116370944> - Get the icon of your latest game.\n"
+                "</getuser:1275183732927758375> - Get a preview "
+                "of your Steam profile.\n"
+                "</getlatestgame:1275183733116370944> - Get the "
+                "icon of your latest game.\n"
                 "</getachievements:1275183733116370946> - Get the number of"
                 " achievements you have unlocked.\n\n"
                 "# Need More Help?\n"
-                "If you need further assistance, feel free to ask in the support channel or"
+                "If you need further assistance, feel "
+                "free to ask in the support channel or"
                 " reach out to  <@543132514848604170>."
             )
         else:  # Spanish by default or if language is 'es'
             tutorial_text = (
-                "# ¡Bienvenido al Tutorial de Configuración del Bot de Steam!\n\n"
+                "# ¡Bienvenido al Tutorial de "
+                "Configuración del Bot de Steam!\n\n"
                 "## 1. Configuración de tu SteamID\n"
                 "Para vincular tu cuenta de Steam con el bot, "
                 " necesitarás proporcionar tu SteamID. "
@@ -565,7 +572,8 @@ class UserCommands(commands.Cog):
                 "`/getsteamid`. El resultado será tu SteamID.\n\n"
                 "## 2. Vincula tu SteamID con el Bot\n"
                 "Una vez que tengas tu SteamID, puedes vincularla "
-                "a tu cuenta de Discord usando el siguiente comando:\n"
+                "a tu cuenta de Discord "
+                "usando el siguiente comando:\n"
                 "`</setup:1275183733116370947> steamid:<tu_steamid>`\n"
                 "Reemplaza `<tu_steamid>` con tu SteamID real.\n\n"
                 "## 3. Verifica tu Configuración\n"
@@ -579,7 +587,8 @@ class UserCommands(commands.Cog):
                 "Ahora que tu SteamID está vinculada, "
                 "puedes usar otros comandos para obtener "
                 "información sobre tu perfil de Steam. Por ejemplo:\n"
-                "`</gethours:1275183732927758366>` - Obtén el total de horas "
+                "`</gethours:1275183732927758366>` - "
+                "Obtén el total de horas "
                 "jugadas en todos tus juegos.\n"
                 "`</getgames:1275183732927758368>` - Obtén el número "
                 "de juegos que posees.\n"
@@ -591,7 +600,8 @@ class UserCommands(commands.Cog):
                 "de tu perfil de Steam.\n"
                 "`</getlatestgame:1275183733116370944>` - Obtén el icono de "
                 "tu juego más reciente.\n"
-                "`</getachievements:1275183733116370946>` - Obtén el número de logros "
+                "`</getachievements:1275183733116370946>` - "
+                "Obtén el número de logros "
                 "que has desbloqueado.\n\n"
                 "# ¿Necesitas más ayuda?\n"
                 "Si necesitas más asistencia, no dudes  "
