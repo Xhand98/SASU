@@ -1,9 +1,6 @@
 import sqlite3
 from NewSimpleSQL.SimpleSQLite import Database, ID
 from datetime import datetime
-import shutil
-import os
-
 
 class DatabaseManager:
     """
