@@ -7,6 +7,7 @@ class EventHandlers(commands.Cog):
         self.bot = bot
         self.db_operations = DatabaseOperations(db_path)
 
+
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.bot.user} is ready and online!")

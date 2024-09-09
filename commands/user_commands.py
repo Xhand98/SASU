@@ -16,6 +16,7 @@ class UserCommands(commands.Cog):
         self.bot = bot
         self.db_operations = Dbo(db_path)
 
+
     @commands.slash_command(name="gethours", description="Get hours of a Steam user across all its games.")
     async def gethours_command(self, ctx: discord.ApplicationContext, *, steamid: str | None = None):
         await ctx.defer()

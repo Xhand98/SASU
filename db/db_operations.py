@@ -8,6 +8,7 @@ class DatabaseOperations:
     def __init__(self, db_path):
         self.db_path = db_path
 
+
     async def get_steamid_from_db(self, discord_id: str):
         db = Dbm(db_path=self.db_path)
         db.connect()

@@ -8,6 +8,7 @@ class AdminCommands(commands.Cog):
         self.bot = bot
         self.db_operations = Dbo(db_path)
 
+
     @commands.slash_command(name="sasuban", description="Bans user from using the bot.")
     async def sasuban_command(self, ctx: discord.ApplicationContext, member: discord.Member):
         if not await is_authorized(ctx.author):

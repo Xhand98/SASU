@@ -21,6 +21,7 @@ def normalize_data(data):
     ]
     return normalized_data
 
+
 async def process_user_or_steamid(user_input: str):
     """Process a user input to get a SteamID.
 
@@ -38,9 +39,11 @@ async def process_user_or_steamid(user_input: str):
 
     return await get_steamid(user_input)
 
+
 async def is_authorized(user: discord.User) -> bool:
     """Checks if the user has authorization to use the command"""
     return user.id in AUTHORIZED_USER_IDS
+
 
 async def check_user(steamid, ctx: discord.ApplicationContext):
     """Checks if a user has a SteamID associated with their Discord ID in the database.
@@ -61,6 +64,7 @@ async def check_user(steamid, ctx: discord.ApplicationContext):
     steamid = await process_user_or_steamid(steamid)
     return steamid
 
+
 async def user_info(steamid):
     """Get the username of a Steam user from their SteamID.
 
@@ -78,6 +82,7 @@ async def user_info(steamid):
 
     return "User not found or data is private"
 
+
 async def get_steamh(res):
     """Get the total hours of a Steam user across all games.
 
@@ -93,6 +98,7 @@ async def get_steamh(res):
         print(f"Error getting hours: {e}")
         return None
 
+
 async def verify_banned(ctx: discord.ApplicationContext):
     """Check if the user is banned from using the bot before each command invocation
 
@@ -102,5 +108,3 @@ async def verify_banned(ctx: discord.ApplicationContext):
     if await Dbo.is_banned(discord_id=ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
         return
-
-# Add other utility functions here
