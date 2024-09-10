@@ -46,7 +46,6 @@ class UserCommands(commands.Cog):
         self.db_operations : DatabaseOperations
             The database operations object.
         """
-
         self.bot = bot
         self.db_operations = Dbo(db_path)
 
@@ -370,7 +369,6 @@ class UserCommands(commands.Cog):
             the user if the request is successful,
             otherwise a string with an error message.
         """
-
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -413,7 +411,6 @@ class UserCommands(commands.Cog):
             user's Steam profile if the request is successful,
             otherwise a string with an error message.
         """
-
         await ctx.defer()
         try:
             if steamid is None:
@@ -518,7 +515,6 @@ class UserCommands(commands.Cog):
             played by the user if the request is successful,
             otherwise a string with an error message.
         """
-
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))

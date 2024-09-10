@@ -41,7 +41,6 @@ class EventHandlers(commands.Cog):
         self.db_operations : DatabaseOperations
             The database operations object.
         """
-
         self.bot = bot
         self.db_operations = DatabaseOperations(db_path)
 
@@ -78,7 +77,6 @@ class EventHandlers(commands.Cog):
         manually. The function is called
         automatically when a command is invoked.
         """
-
         if await self.db_operations.is_banned(ctx.author.id):
             await ctx.respond("You are banned from using this bot.")
             return

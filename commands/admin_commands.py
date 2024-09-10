@@ -83,7 +83,6 @@ class AdminCommands(commands.Cog):
         -------
         None
         """
-
         if not await is_authorized(ctx.author):
             await ctx.respond("You are not allowed to use this command.")
             return

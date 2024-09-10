@@ -74,7 +74,6 @@ class DatabaseOperations:
         bool
             True if the user is banned, False otherwise
         """
-
         db = Dbm(db_path=self.db_path)
         db.connect()
         queso = db.isbanned(discord_id)
