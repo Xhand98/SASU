@@ -2,8 +2,5 @@ py-cord>=2.0.0
 pytz
 requests
 aiohttp
-sqlite3
-re
 NewSimpleSQL
-dotenv
 httpx
