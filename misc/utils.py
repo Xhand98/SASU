@@ -59,8 +59,9 @@ async def check_user(steamid, ctx: discord.ApplicationContext):
     Returns:
     int | str | None: The SteamID if the user has one, otherwise None.
     """
+    db = Dbo('../db/users.db')
     if steamid is None:
-        steamid = await Dbo.get_steamid_from_db(discord_id=str(ctx.author.id))
+        steamid = await db.get_steamid_from_db(str(ctx.author.id))
         steamid = steamid[0][0]
     steamid = await process_user_or_steamid(steamid)
     return steamid
@@ -106,6 +107,7 @@ async def verify_banned(ctx: discord.ApplicationContext):
     If the user is banned, send a message to
     the user and prevent the command from executing.
     """
-    if await Dbo.is_banned(discord_id=ctx.author.id):
+    db = Dbo('../db/users.db')
+    if await db.is_banned(ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
         return
