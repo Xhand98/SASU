@@ -4,4 +4,3 @@ requests
 aiohttp
 NewSimpleSQL
 httpx
-cryptography
