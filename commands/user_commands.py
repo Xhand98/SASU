@@ -19,7 +19,34 @@ import time
 
 
 class UserCommands(commands.Cog):
+    """
+    A class containing commands for
+    users to interact with the bot.
+
+    Contains commands such as `getuser`,
+    `getlink`, `setup`, `getlatestgame`,
+    and `tutorial`.
+    """
+
     def __init__(self, bot, db_path):
+        """
+        Initializes a UserCommands object.
+
+        Parameters
+        ----------
+        bot : discord.Bot
+            The bot instance.
+        db_path : str
+            The path to the database file.
+
+        Attributes
+        ----------
+        self.bot : discord.Bot
+            The bot instance.
+        self.db_operations : DatabaseOperations
+            The database operations object.
+        """
+
         self.bot = bot
         self.db_operations = Dbo(db_path)
 
