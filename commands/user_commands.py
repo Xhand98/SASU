@@ -29,6 +29,15 @@ class UserCommands(commands.Cog):
     async def gethours_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """
+        Gets the total hours a user has played across all their games.
+
+        Args:
+            steamid: The SteamID of the user to get the hours of.
+
+        Returns:
+            A string with the total hours the user has played.
+        """
         await ctx.defer()
         try:
             if steamid is None:
@@ -58,6 +67,19 @@ class UserCommands(commands.Cog):
     async def getsteamid_command(
         self, ctx: discord.ApplicationContext, *, steamurl: str | None = None
     ):
+        
+        """
+        Gets the Steam ID of a user.
+
+        Args:
+            steamurl: The Steam profile URL or 
+            Steam ID of the user to get the Steam ID of.
+
+        Returns:
+            A discord.Embed with the Steam ID 
+            of the user if the request is successful,
+            otherwise a string with an error message.
+        """
         await ctx.defer()
         if steamurl is None:
             data = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -101,6 +123,18 @@ class UserCommands(commands.Cog):
     async def getgames_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """
+        Gets the number of games a Steam user owns.
+
+        Args:
+            steamid: The SteamID of the 
+            user to get the number of games of.
+
+        Returns:
+            A discord.Embed with the number of 
+            games the user owns if the request is successful,
+            otherwise a string with an error message.
+        """
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -132,6 +166,20 @@ class UserCommands(commands.Cog):
     async def getpfp_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        
+        
+        """
+        Gets the profile picture of a Steam user.
+
+        Args:
+            steamid: The SteamID of the user to
+            get the profile picture of.
+
+        Returns:
+            A discord.Embed with the profile picture 
+            of the user if the request is successful,
+            otherwise a string with an error message.
+        """
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -166,6 +214,16 @@ class UserCommands(commands.Cog):
     async def getlink_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """
+        Gets the link to a user's profile.
+
+        Args:
+            steamid (str, optional): The SteamID of the user to get the link of.
+                Defaults to None.
+
+        Returns:
+            discord.Embed: An embed containing the link to the user's profile.
+        """
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -196,6 +254,16 @@ class UserCommands(commands.Cog):
     async def getlevel_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """Gets the level of a Steam user.
+
+        Args:
+            steamid: The SteamID of the user to get the level of.
+
+        Returns:
+            A discord.Embed with the level of 
+            the user if the request is successful,
+            otherwise a string with an error message.
+        """
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -227,6 +295,17 @@ class UserCommands(commands.Cog):
     async def getbadges_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """
+        Gets the number of badges a Steam user has.
+
+        Args:
+            steamid: The SteamID of the user to get the number of badges of.
+
+        Returns:
+            A discord.Embed with the number of 
+            badges the user has if the request is successful,
+            otherwise a string with an error message.
+        """
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -256,6 +335,18 @@ class UserCommands(commands.Cog):
     async def getcountry_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """
+        Gets the country of a Steam user.
+
+        Args:
+            steamid: The SteamID of the user to get the country of.
+
+        Returns:
+            A discord.Embed with the country of 
+            the user if the request is successful,
+            otherwise a string with an error message.
+        """
+
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -287,6 +378,18 @@ class UserCommands(commands.Cog):
     async def getuser_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """
+        Gets a preview of a Steam user's profile.
+
+        Args:
+            steamid: The SteamID of the user to get the profile of.
+
+        Returns:
+            A discord.Embed with a preview of the 
+            user's Steam profile if the request is successful,
+            otherwise a string with an error message.
+        """
+        
         await ctx.defer()
         try:
             if steamid is None:
@@ -380,6 +483,18 @@ class UserCommands(commands.Cog):
     async def getlatestgame_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """
+        Gets the latest game played by a user.
+
+        Args:
+            steamid: The SteamID of the user to get the latest game of.
+
+        Returns:
+            A discord.Embed with the latest game 
+            played by the user if the request is successful,
+            otherwise a string with an error message.
+        """
+        
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -413,6 +528,17 @@ class UserCommands(commands.Cog):
     async def getachievements_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """Gets the number of achievements 
+        a player has unlocked.
+
+        Args:
+            steamid: The SteamID of the 
+            user to get achievements for.
+
+        Returns:
+            A discord.Embed with the number 
+            of achievements the user has unlocked.
+        """
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
@@ -444,6 +570,22 @@ class UserCommands(commands.Cog):
     async def setup_command(
         self, ctx: discord.ApplicationContext, *, steamid: str | None = None
     ):
+        """Sets up user for the use of the bot.
+
+        If steamid is provided, it will link 
+        the SteamID to the user's Discord ID.
+        If steamid is not provided, it will 
+        give instructions on how to link the SteamID
+        without providing the steamid as an a
+        rgument.
+
+        Args:
+            steamid (str, optional): The SteamID 
+            of the user. Defaults to None.
+
+        Returns:
+            discord.Interaction: The response of the command.
+        """
         await ctx.defer()
         if steamid:
             steamid = await process_user_or_steamid(steamid)
@@ -469,6 +611,26 @@ class UserCommands(commands.Cog):
         name="showinfo", description="Shows information for the user."
     )
     async def showinfo_command(self, ctx: discord.ApplicationContext):
+        """Shows information for the user.
+
+        This command shows the SteamID, Steam username, 
+        Discord username, and Discord ID of the user.
+
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            The Discord application command context.
+
+        Returns
+        -------
+        discord.InteractionResponse
+            The response to the interaction.
+
+        Raises
+        ------
+        Exception
+            If any error occurs during the execution of the command.
+        """
         await ctx.defer()
         try:
             discordid = str(ctx.author.id)
@@ -494,6 +656,20 @@ class UserCommands(commands.Cog):
 
     @commands.slash_command(name="simpletest", description="Simple test command.")
     async def simpletest_command(self, ctx: discord.ApplicationContext):
+        """
+        A simple test command. This command 
+        will defer the interaction, wait
+        one second, and then respond with a message.
+
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            The interaction context.
+
+        Returns
+        -------
+        None
+        """
         await ctx.defer()
         await asyncio.sleep(1)
         await ctx.respond("This is a test message.")
@@ -505,6 +681,14 @@ class UserCommands(commands.Cog):
     async def tutorial_command(
         self, ctx: discord.ApplicationContext, language: str = "en"
     ):
+        """
+        Guide on how to set up your Steam account with the bot.
+
+        Parameters
+        ----------
+        language : str, optional
+            The language of the tutorial. Defaults to "en".
+        """
         await ctx.defer()
         if language.lower() not in ["es", "en"]:
             language = "en"
