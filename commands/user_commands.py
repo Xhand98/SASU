@@ -63,6 +63,8 @@ class UserCommands(commands.Cog):
 
         Returns:
             A string with the total hours the user has played.
+            :param steamid:
+            :param ctx:
         """
         await ctx.defer()
         try:
@@ -104,6 +106,8 @@ class UserCommands(commands.Cog):
             A discord.Embed with the Steam ID
             of the user if the request is successful,
             otherwise a string with an error message.
+            :param steamurl:
+            :param ctx:
         """
         await ctx.defer()
         if steamurl is None:
@@ -596,8 +600,8 @@ class UserCommands(commands.Cog):
         the SteamID to the user's Discord ID.
         If steamid is not provided, it will
         give instructions on how to link the SteamID
-        without providing the steamid as an a
-        rgument.
+        without providing the steamid as an
+        argument.
 
         Args:
             steamid (str, optional): The SteamID
@@ -757,7 +761,7 @@ class UserCommands(commands.Cog):
                 "# Need More Help?\n"
                 "If you need further assistance, feel "
                 "free to ask in the support channel or"
-                " reach out to  <@543132514848604170>."
+                " reach out to <@543132514848604170>."
             )
         else:  # Spanish by default or if language is 'es'
             tutorial_text = (
@@ -810,7 +814,24 @@ class UserCommands(commands.Cog):
                 "# ¿Necesitas más ayuda?\n"
                 "Si necesitas más asistencia, no dudes  "
                 "en preguntar en el canal de soporte o"
-                "contactar a cualquier <@543132514848604170> ."
+                "contactar a <@543132514848604170> ."
             )
 
         await ctx.respond(tutorial_text)
+
+    @commands.slash_command(name="help", description="Shows a list of all the commands.")
+    async def help_command(self, ctx: discord.ApplicationContext):
+        """Displays a list of available commands and their descriptions."""
+        embed = discord.Embed(
+            title="Help",
+            description="List of available commands:",
+            color=discord.Color.blue()
+        )
+
+        for cog_name, cog in self.bot.cogs.items():
+            commands_list = cog.get_commands()
+            if commands_list:
+                command_descriptions = "\n".join([f"/{cmd.name} - {cmd.description}" for cmd in commands_list])
+                embed.add_field(name=cog_name, value=command_descriptions, inline=False)
+
+        await ctx.respond(embed=embed)
