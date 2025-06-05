@@ -1,9 +1,10 @@
 # utils.py
+from typing import Any, Coroutine
+
 import discord
 from getrequests.getinfo import get_steamid, get_pic, get_hours
 from db.db_operations import DatabaseOperations as Dbo
 
-AUTHORIZED_USER_IDS = [543132514848604170, 987654321012345678]
 
 
 def normalize_data(data):
@@ -41,9 +42,18 @@ async def process_user_or_steamid(user_input: str):
     return await get_steamid(user_input)
 
 
-async def is_authorized(user: discord.User) -> bool:
-    """Checks if the user has authorization to use the command"""
-    return user.id in AUTHORIZED_USER_IDS
+async def is_authorized(user: discord.User) -> Coroutine[Any, Any, Any]:
+    """Checks if the user has authorization to use the command
+
+    Args:
+        user (discord.User): User passed
+        to get the ID of the user.
+
+    Returns:
+
+    """
+    db = Dbo(db_path='../db/users.db')
+    return True # PONER EL ISADMIN
 
 
 async def check_user(steamid, ctx: discord.ApplicationContext):

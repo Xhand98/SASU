@@ -2,7 +2,6 @@ import sqlite3
 from NewSimpleSQL.SimpleSQLite import Database, ID
 from datetime import datetime
 
-
 class DatabaseManager:
     """
     A class to manage database operations for the bot.
@@ -338,3 +337,4 @@ class DatabaseManager:
         finally:
             db.commit()
             db.close()
+            

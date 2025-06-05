@@ -80,6 +80,3 @@ class EventHandlers(commands.Cog):
         if await self.db_operations.is_banned(ctx.author.id):
             await ctx.respond("You are banned from using this bot.")
             return
-
-
-# Add other event handlers here

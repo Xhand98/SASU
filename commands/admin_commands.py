@@ -98,7 +98,7 @@ class AdminCommands(commands.Cog):
     async def sasubackup_command(self, ctx: discord.ApplicationContext):
         """Backs up the database.
 
-        This command will backup the database to a
+        This command will back up the database to a
         file named "backup.db" in the
         same directory as the bot. The backup file
         will contain all the data in
