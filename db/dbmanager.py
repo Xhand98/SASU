@@ -1,4 +1,5 @@
-import sqlite3
+# import sqlite3
+from db.models import DiscordUser, SteamAccount, Blacklist
 from NewSimpleSQL.SimpleSQLite import Database, ID
 from datetime import datetime
 
@@ -49,27 +50,6 @@ class DatabaseManager:
         self.conn = None
         self.db = None
 
-    def connect(self):
-        """
-        Establishes a connection to the database.
-
-        Returns
-        -------
-        None
-        """
-        self.conn = sqlite3.connect(self.db_path)
-        self.db = Database(self.conn)
-
-    def close(self):
-        """
-        Closes the database connection.
-
-        Returns
-        -------
-        None
-        """
-        self.db.close()
-
     def get_discord(self):
         """
         Retrieves Discord user data.
@@ -80,78 +60,8 @@ class DatabaseManager:
             A list of tuples containing the Discord ID, username, created_at, and
             updated_at for each user in the database.
         """
-        self.db.simple_select_data("discord_users", "*")
-
-    def create_tables(self):
-        """
-        Creates necessary tables in the database.
-
-        The tables created are:
-            - discord_users
-            - steam_accounts
-            - blacklist
-
-        discord_users contains the following columns:
-            - id (auto-incrementing primary key)
-            - discord_id (NOT NULL, string)
-            - discord_username (NOT NULL, string)
-            - created_at (string)
-            - updated_at (string)
-
-        steam_accounts contains the following columns:
-            - id (auto-incrementing primary key)
-            - discord_user_id (NOT NULL, integer, foreign key to discord_users)
-            - steam_id (NOT NULL, integer)
-            - steam_username (NOT NULL, string)
-            - created_at (string)
-            - updated_at (string)
-
-        blacklist contains the following columns:
-            - id (auto-incrementing primary key)
-            - discord_id (NOT NULL, string, foreign key to discord_users)
-
-        The foreign key constraints ensure that a steam account is linked to a
-        discord user, and that a discord user is not banned if they are not in the
-        discord_users table.
-        """
-        structure1 = {
-            "name": "discord_users",
-            "columns": {
-                "id": ID(),
-                "discord_id": {"type": str, "constraints": "NOT NULL"},
-                "discord_username": {"type": str, "constraints": "NOT NULL"},
-                "created_at": str,
-                "updated_at": str,
-            },
-        }
-        structure2 = {
-            "name": "steam_accounts",
-            "columns": {
-                "id": ID(),
-                "discord_user_id": {"type": int, "constraints": "NOT NULL"},
-                "steam_id": {"type": int, "constraints": "NOT NULL"},
-                "steam_username": {"type": str, "constraints": "NOT NULL"},
-                "created_at": str,
-                "updated_at": str,
-            },
-            "fk": [
-                {
-                    "column": "discord_user_id",
-                    "references": ["discord_users", "discord_id"],
-                }
-            ],
-        }
-        structure3 = {
-            "name": "blacklist",
-            "columns": {
-                "id": ID(),
-                "discord_id": {"type": str, "constraints": "NOT NULL"},
-            },
-            "fk": [
-                {"column": "discord_id", "references": ["discord_users", "discord_id"]}
-            ],
-        }
-        self.db.complicated_create_tables([structure1, structure2, structure3])
+        # self.db.simple_select_data("discord_users", "*")
+        DiscordUser.select()
 
     def link_steam_id(
         self, discord_id: int, steam_id: int, steam_username: str, discord_username: str
@@ -171,25 +81,19 @@ class DatabaseManager:
         discord_username : str
             The username of the Discord user to link.
         """
-        self.db.simple_insert_data(
-            "steam_accounts",
-            (
-                steam_id,
-                discord_id,
-                steam_username,
-                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),  # created_at
-                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),  # updated_at
-            ),
+        
+        user, _ = DiscordUser.get_or_create(
+            discord_id = discord_id,
+            defaults={
+                'username': discord_username,
+            },
         )
-        # Insert data into discord_users table
-        self.db.simple_insert_data(
-            "discord_users",
-            (
-                discord_id,
-                discord_username,
-                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-                str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-            ),
+        SteamAccount.get_or_create(
+            discord=user,
+            defaults={
+                'steam_id': steam_id,
+                'username': steam_username
+            },
         )
 
     def get_steam_info(self, discord_id):
@@ -273,21 +177,6 @@ class DatabaseManager:
         """
         self.db.simple_delete_data("blacklist", f"discord_id = '{discord_id}'")
         return "User is now unbanned"
-
-    def run_custom_query(self, query):
-        """
-        Executes a custom SQL query.
-
-        Parameters
-        ----------
-        query : str
-            The SQL query to execute.
-
-        Returns
-        -------
-        None
-        """
-        self.db.custom_execute(query)
 
     def update_user_info(self, discord_id, new_username, date):
         """
