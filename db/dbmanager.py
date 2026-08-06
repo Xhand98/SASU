@@ -66,7 +66,6 @@ class DatabaseManager:
     def link_steam_id(
         self, discord_id: int, steam_id: int, steam_username: str, discord_username: str
     ):
-        # Insert data into steam_accounts table
         """
         Links a Steam account to a Discord user.
 
@@ -110,22 +109,16 @@ class DatabaseManager:
         list
             A list of dictionaries containing the user's Steam account info
         """
-        tables = [
-            {
-                "name": "steam_accounts",
-                "columns": "*",
-                "conditions": f"WHERE discord_user_id = '{discord_id}'",
-                "fetch": True,
-            },
-            {
-                "name": "discord_users",
-                "columns": "*",
-                "conditions": f"WHERE discord_id = '{discord_id}'",
-                "fetch": True,
-            },
-        ]
-        data = self.db.complicated_select_data(tables)
-        return data
+        user = DiscordUser.get_or_none(
+            DiscordUser.discord_id == discord_id
+        )
+        
+        if user is None:
+            return None
+        
+        return SteamAccount.get_or_none(
+            SteamAccount.discord == user
+        )
 
     def ban(self, discord_id: int):
         """
@@ -135,11 +128,24 @@ class DatabaseManager:
         ----------
         discord_id : int
             The Discord ID of the user to ban
+            
+        Returns
+        ----------
+        bool
+            True if the user got banned, False if not
         """
-        self.db.simple_insert_data(
-            "blacklist",
-            (discord_id, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))),
+        user = DiscordUser.get_or_none(
+            DiscordUser.discord_id == discord_id
         )
+        
+        if user is None:
+            return False
+        
+        _, created = Blacklist.get_or_create(
+            discord = user,
+        )
+        
+        return created
 
     def isbanned(self, discord_id: int):
         """
@@ -155,11 +161,16 @@ class DatabaseManager:
         bool
             True if the user is banned, False otherwise
         """
-        if self.db.simple_select_data(
-            "blacklist", "discord_id", f"WHERE discord_id = '{discord_id}'"
-        ):
-            return True
-        return False
+        user = DiscordUser.get_or_none(
+            DiscordUser.discord_id == discord_id
+        )
+        
+        if user is None:
+            return False
+        
+        return Blacklist.get_or_none(
+            Blacklist.discord == user
+        ) is not None
 
     def unban(self, discord_id):
         """
@@ -175,8 +186,19 @@ class DatabaseManager:
         str
             A success message if the user is unbanned successfully.
         """
-        self.db.simple_delete_data("blacklist", f"discord_id = '{discord_id}'")
-        return "User is now unbanned"
+        
+        user = DiscordUser.get_or_none(
+            DiscordUser.discord_id == discord_id
+        )
+        
+        if user is None:
+            return False
+        
+        return (
+            Blacklist
+            .delete()
+            .where(user.discord_id == discord_id)
+            .execute()) > 0
 
     def update_user_info(self, discord_id, new_username, date):
         """
@@ -195,35 +217,15 @@ class DatabaseManager:
         Returns
         -------
         None
-
-        Raises
-        ------
-        Exception
-            If an error occurs during the update.
         """
-        try:
-            # Establish a new database connection for this thread
-            connection = self.conn
-            db = Database(connection)
-            # Prepare the update statement with multiple columns
-            update_query = """
-            UPDATE steam_accounts
-            SET steam_id = ?, updated_at = ?
-            WHERE discord_user_id = ?
-            """
-            # Execute the update
-            db.custom_execute(update_query, new_username, date, discord_id)
-            # Verify the update
-            users = db.simple_select_data(
-                table="discord_users",
-                columns="discord_id, discord_username, updated_at",
-                conditions=f"WHERE discord_id = {discord_id}",
-                one_fetch=True,
+        updated = (
+            DiscordUser(
+                username = new_username
             )
-            print("Updated user:", users)
-        except Exception as e:
-            print(f"An error occurred: {e}")
-        finally:
-            db.commit()
-            db.close()
+            .where(
+                DiscordUser.discord_id == discord_id
+            )
+        .execute()
+        )
+        return updated > 0
             
