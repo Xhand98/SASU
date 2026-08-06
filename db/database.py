@@ -1,3 +1,3 @@
 from peewee import SqliteDatabase
 
-db = SqliteDatabase(':memory:')
+db = SqliteDatabase('./db/bot.db')
