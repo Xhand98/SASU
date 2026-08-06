@@ -5,5 +5,5 @@ from .discord_user import DiscordUser
 
 
 class Blacklist(BaseModel):
-    discord_id = ForeignKeyField(DiscordUser, unique=True, backref='id')
+    discord = ForeignKeyField(DiscordUser, unique=True, backref='blacklist', on_delete='CASCADE')
     banned_at = DateTimeField(default=datetime.datetime.now)
