@@ -111,7 +111,7 @@ async def fetch_achievements_for_game(session, app_id, steam_id):
         ValueError: If the response body is not valid JSON.
     """
     achievements = await get_achievements(session, app_id, steam_id, API_KEY)
-    print(f"Game {app_id}: {achievements}")  # Debugging line
+    # print(f"Game {app_id}: {achievements}")  # Debugging line
     if "playerstats" in achievements and "achievements" in achievements["playerstats"]:
         return [
             ac
@@ -163,5 +163,5 @@ async def main(steam_id):
     """
     async with aiohttp.ClientSession() as session:
         result = await process_data(session, steam_id)
-        print(result)
+        # print(result)
     return result
