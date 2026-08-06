@@ -52,7 +52,7 @@ async def is_authorized(user: discord.User) -> Coroutine[Any, Any, Any]:
     Returns:
 
     """
-    db = Dbo(db_path='../db/users.db')
+    db = Dbo()
     return True # PONER EL ISADMIN
 
 
@@ -69,10 +69,10 @@ async def check_user(steamid, ctx: discord.ApplicationContext):
     Returns:
     int | str | None: The SteamID if the user has one, otherwise None.
     """
-    db = Dbo('../db/users.db')
+    db = Dbo()
     if steamid is None:
         steamid = await db.get_steamid_from_db(str(ctx.author.id))
-        steamid = steamid[0][0]
+        steamid = steamid.steam_id
     steamid = await process_user_or_steamid(steamid)
     return steamid
 
@@ -120,4 +120,4 @@ async def verify_banned(ctx: discord.ApplicationContext):
     db = Dbo('../db/users.db')
     if await db.is_banned(ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
-        return
+        return 

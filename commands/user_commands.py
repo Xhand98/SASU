@@ -47,7 +47,7 @@ class UserCommands(commands.Cog):
             The database operations object.
         """
         self.bot = bot
-        self.db_operations = Dbo(db_path)
+        self.db_operations = Dbo()
 
     @commands.slash_command(
         name="gethours", description="Get hours of a Steam user across all its games."
@@ -658,13 +658,12 @@ class UserCommands(commands.Cog):
         try:
             discordid = str(ctx.author.id)
             info = await self.db_operations.get_steamid_from_db(discordid)
-            info = normalize_data(info)
             embedd = discord.Embed(
                 title=f"{ctx.author.name}'s Stored Information",
                 color=discord.Color.random(),
             )
             if discordid:
-                embed.create_embed_tables(embedd, info, default_inline=True)
+                embed.populate_user_embed(embedd, info, default_inline=True)
                 if embedd.fields:
                     await ctx.respond(embed=embedd)
                 else:

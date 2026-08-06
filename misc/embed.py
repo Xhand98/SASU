@@ -1,11 +1,11 @@
 import discord
 import datetime
-
+from db.models import SteamAccount
 
 def create_embed(
     em_title: str,
     em_description: str,
-    em_color: discord.Color,
+    em_color: discord.ColorSteamAccount,
     author: tuple = None,
     footer: tuple = None,
     tables: list = None,
@@ -85,11 +85,11 @@ def create_embed(
             Embed.set_footer(text=f"Create Footer Error \r \r Error: {error}")
 
     if tables is not None:
-        create_embed_tables(Embed, tables)
+        populate_user_embed(Embed, tables)
 
     if image is not None:
         try:
-            Embed.set_image(url=image)
+            Embed.set_imageSteamAccount(url=image)
         except (ValueError, IndexError, TypeError, discord.HTTPException) as error:
             print("An error occurred while adding an image to the embed")
             Embed.add_field(name="Add Image Error", value=error, inline=False)
@@ -104,7 +104,7 @@ def create_embed(
     return Embed
 
 
-def create_embed_tables(embed: discord.Embed, tables: list, default_inline=True):
+def populate_user_embed(embed: discord.Embed, steam: SteamAccount, default_inline=True):
     """
     Adds fields to an embed based on a list of tables.
 
@@ -112,23 +112,8 @@ def create_embed_tables(embed: discord.Embed, tables: list, default_inline=True)
     ----------
     embed : discord.Embed
         The embed to add fields to.
-    tables : list
-        A list of tuples containing the data to add to the embed.
-        Each tuple should have the following structure:
-
-        - len(obj) == 6:
-            - obj[0]: The ID of the user.
-            - obj[1]: The Steam ID of the user.
-            - obj[2]: The username of the user.
-            - obj[3]: The created date of the user.
-            - obj[4]: The updated date of the user.
-            - obj[5]: The updated date of the user as a string.
-        - len(obj) == 5:
-            - obj[0]: The ID of the user.
-            - obj[1]: The Discord ID of the user.
-            - obj[2]: The username of the user.
-            - obj[3]: The created date of the user.
-            - obj[4]: The updated date of the user.
+    steam : SteamAccount
+        The steam account that will populate the embed
     default_inline : bool
         Whether the fields should be inline or not. Defaults to True.
 
@@ -137,30 +122,25 @@ def create_embed_tables(embed: discord.Embed, tables: list, default_inline=True)
     None
     """
     try:
-        if not tables:
-            print("No data to add to the embed.")
+        if steam is None:
             embed.add_field(
-                name="No Data", value="No information available.", inline=False
+                name="No data",
+                value="No information available.",
+                inline=False
             )
             return
+        
+        embed.add_field(
+            name="Steam info",
+            value=f"Steam ID: {steam.steam_id} \n User:{steam.username} \n Created: {steam.created_at} \n Last update: {steam.updated_at}",
+            inline=default_inline
+        )
 
-        for obj in tables:
-            if len(obj) == 6 and isinstance(obj[5], str):
-                embed.add_field(
-                    name="Steam Info",
-                    value=f"ID: {obj[0]}\nSteam ID: {obj[1]}\nUser: "
-                    f"{obj[3]}\nCreated: {obj[4]}\nUpdated: {obj[5]}",
-                    inline=default_inline,
-                )
-            elif len(obj) == 5:
-                embed.add_field(
-                    name=f"Discord Info: {obj[0]}",
-                    value=f"ID: {obj[0]}\nDiscord ID: {obj[1]}\nUser:"
-                    f" {obj[2]}\nCreated: {obj[3]}\nUpdated: {obj[4]}",
-                    inline=default_inline,
-                )
-            else:
-                print(f"Unexpected data format: {obj}")
+        embed.add_field(
+            name="Discord info",
+            value=f"Discord ID: {steam.discord.discord_id} \n Username: {steam.discord.username} \n Created: {steam.discord.created_at} \n Last update: {steam.discord.updated_at}",
+            inline=default_inline
+        )
 
     except (ValueError, IndexError, TypeError) as error:
         print(f"An error occurred while adding the tables: {error}")
