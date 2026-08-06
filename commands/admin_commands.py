@@ -34,7 +34,7 @@ class AdminCommands(commands.Cog):
             The database operations object.
         """
         self.bot = bot
-        self.db_operations = Dbo(db_path)
+        self.db_operations = Dbo()
 
     @commands.slash_command(name="sasuban", description="Bans user from using the bot.")
     async def sasuban_command(
