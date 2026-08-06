@@ -566,14 +566,20 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            print('got steam id')
+            print(steamid)
             steamid = await check_user(steamid, ctx)
+            print('checked steam id', steamid)
         else:
             steamid = await check_user(steamid, ctx)
-
+        # SITIO DEL ERROR
         if steamid:
             achievements = await getachievements.main(steamid)
+            print("GOT ACHIEVEMENTS")
             if achievements is not None:
+                print("Achievements is not None")
                 user_name = await user_info(steamid)
+                print('await  user info')
                 result = discord.Embed(
                     title=f"{user_name}'s Achievements",
                     description=f"{user_name} has {achievements} achievements.",
@@ -693,7 +699,6 @@ class UserCommands(commands.Cog):
         None
         """
         await ctx.defer()
-        await asyncio.sleep(1)
         await ctx.respond("This is a test message.")
 
     @commands.slash_command(
