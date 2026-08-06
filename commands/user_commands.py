@@ -426,7 +426,7 @@ class UserCommands(commands.Cog):
                         "No SteamID found linked to your Discord account."
                     )
                     return
-                steamid = str(steamid_data[0][0])
+                steamid = str(steamid_data.steam_id)
 
             steamid = await check_user(steamid, ctx)
             if not steamid:
@@ -619,13 +619,8 @@ class UserCommands(commands.Cog):
             pic_data = await getinfo.get_pic(steamid)
             steam_username = pic_data.get("personaname")
             db = Dbm()
-            # db = Dbm()
             db.link_steam_id(discord_id=discordid, steam_id=steamid, steam_username=steam_username, discord_username=discordname)
             
-            # db.connect()
-            # discordid = int(discordid)
-            # steamid = int(steamid)
-            # db.link_steam_id(discordid, steamid, steam_username, discordname)
             await ctx.respond(
                 f"Your SteamID {steamid} has been linked to {ctx.author}."
             )
