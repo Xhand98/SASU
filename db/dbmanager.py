@@ -28,27 +28,10 @@ class DatabaseManager:
         backup_database(): Creates a backup of the database.
     """
 
-    def __init__(self, db_path):
+    def __init__(self):
         """
         Initializes a DatabaseManager object.
-        self.db_path = db_path
-        Parameters
-        ----------
-        db_path : str
-            The path to the database file.
-
-        Attributes
-        ----------
-        self.db_path : str
-            The path to the database file.
-        self.conn : sqlite3.Connection | None
-            The SQLite connection object.
-        self.db : NewSimpleSQL.SimpleSQLite.Database | None
-            The database object.
         """
-        self.db_path = db_path
-        self.conn = None
-        self.db = None
 
     def get_discord(self):
         """
@@ -64,7 +47,7 @@ class DatabaseManager:
         DiscordUser.select()
 
     def link_steam_id(
-        self, discord_id: int, steam_id: int, steam_username: str, discord_username: str
+        self, discord_id: str, steam_id: str, steam_username: str, discord_username: str
     ):
         """
         Links a Steam account to a Discord user.
