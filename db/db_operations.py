@@ -35,7 +35,7 @@ class DatabaseOperations:
         self.db_path : str
             The path to the database file.
         """
-        # self.db_path = db_path
+        self.db = Dbm()
 
     async def get_steam_user(self, discord_id: str) -> str | None:
         """
@@ -54,11 +54,10 @@ class DatabaseOperations:
             A list of dictionaries containing
             the user's Steam account info
         """
-        db = Dbm()
         
-        return db.get_steam_info(discord_id)
+        return self.db.get_steam_info(discord_id)
 
-    async def is_banned(self, discord_id):
+    async def is_banned(self, discord_id: int):
         """
         Checks if a Discord user is banned from using the bot
 
@@ -73,7 +72,7 @@ class DatabaseOperations:
             True if the user is banned, False otherwise
         """
         
-        return Dbm.isbanned(discord_id)
+        return self.db.isbanned(discord_id)
 
     async def ban_user(self, discord_id):
         """
@@ -93,8 +92,7 @@ class DatabaseOperations:
         Exception
             If an error occurs during the ban.
         """
-        db = Dbm()
-        return db.ban(discord_id)
+        return self.db.ban(discord_id)
 
     async def unban_user(self, discord_id):
         """
@@ -114,8 +112,8 @@ class DatabaseOperations:
         Exception
             If an error occurs during the unban.
         """
-        db = Dbm()
-        db.unban(discord_id)
+        
+        self.db.unban(discord_id)
 
     def backup_database(self):
         """
