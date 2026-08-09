@@ -1,7 +1,4 @@
-# import sqlite3
 from db.models import DiscordUser, SteamAccount, Blacklist
-from NewSimpleSQL.SimpleSQLite import Database, ID
-from datetime import datetime
 
 class DatabaseManager:
     """
