@@ -78,7 +78,7 @@ class DatabaseManager:
             },
         )
 
-    def get_steam_info(self, discord_id):
+    def get_steam_info(self, discord_id) -> SteamAccount | None:
         """
         Retrieves Steam account information for a Discord user.
 
