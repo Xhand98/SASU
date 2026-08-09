@@ -14,7 +14,7 @@ from misc.utils import (
 )
 import getrequests.getinfo as getinfo
 import getrequests.getachievements as getachievements
-import getrequests.getgameico as getgameico
+import getrequests.getlatestgame as getlatestgame
 import time
 
 
@@ -69,11 +69,12 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         try:
             if steamid is None:
-                steamid = await self.db_operations.get_steamid_from_db(
-                    str(ctx.author.id)
-                )
-                steamid = str(steamid[0][0])
+                print("passed no steamid")
+                steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+                print(steamid, " desde que la enviamos")
+                steamid = str(steamid.steam_id)
                 steamid = await check_user(steamid, ctx)
+                print(steamid, " despues de checkusers")
             else:
                 steamid = str(steamid)
                 steamid = await check_user(steamid, ctx)
@@ -112,7 +113,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamurl is None:
             data = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = data[0][2]
+            steamid = data.steam_id
             if steamid:
                 user_name = await user_info(steamid)
                 result = discord.Embed(
@@ -167,7 +168,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = await check_user(steamid, ctx)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
 
@@ -210,7 +211,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = await check_user(steamid, ctx)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
 
@@ -254,7 +255,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = await check_user(steamid, ctx)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
 
@@ -294,7 +295,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = await check_user(steamid, ctx)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
 
@@ -336,7 +337,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = await check_user(steamid, ctx)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
 
@@ -376,7 +377,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = await check_user(steamid, ctx)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
 
@@ -522,21 +523,29 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            steamid = await check_user(steamid, ctx)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
 
         if steamid:
-            ico = await getgameico.ejecutar(steamid)
-            if ico is not None:
+            game = await getlatestgame.ejecutar(steamid)
+            if game is not None:
+                icon_url = (
+        "https://media.steampowered.com/"
+        f"steamcommunity/public/images/apps/"
+        f"{game.appid}/{game.icon_url}.jpg"
+    )
                 user_name = await user_info(steamid)
                 result = discord.Embed(
                     title=f"{user_name}'s Latest Game", color=discord.Color.random()
                 )
-                result.set_image(url=ico)
+                result.set_thumbnail(url=icon_url)
+                result.description = f"[{game.name}](https://store.steampowered.com/app/{game.appid}) \n Time played: {game.playtime_forever / 60}h"
+                
                 result.set_author(
                     name=self.bot.user.name, icon_url=self.bot.user.avatar
                 )
+                
                 await ctx.respond(embed=result)
             else:
                 await ctx.respond(
@@ -566,20 +575,14 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         if steamid is None:
             steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
-            print('got steam id')
-            print(steamid)
-            steamid = await check_user(steamid, ctx)
-            print('checked steam id', steamid)
+            steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
         # SITIO DEL ERROR
         if steamid:
             achievements = await getachievements.main(steamid)
-            print("GOT ACHIEVEMENTS")
             if achievements is not None:
-                print("Achievements is not None")
                 user_name = await user_info(steamid)
-                print('await  user info')
                 result = discord.Embed(
                     title=f"{user_name}'s Achievements",
                     description=f"{user_name} has {achievements} achievements.",
@@ -663,7 +666,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         try:
             discordid = str(ctx.author.id)
-            info = await self.db_operations.get_steamid_from_db(discordid)
+            info = await self.db_operations.get_steamid_from_db(str(discordid))
             embedd = discord.Embed(
                 title=f"{ctx.author.name}'s Stored Information",
                 color=discord.Color.random(),
