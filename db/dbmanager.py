@@ -36,8 +36,8 @@ class DatabaseManager:
 
         Returns
         -------
-        list
-            A list of tuples containing the Discord ID, username, created_at, and
+        DiscordUser
+            Object that contains the Discord ID, username, created_at, and
             updated_at for each user in the database.
         """
         # self.db.simple_select_data("discord_users", "*")
@@ -177,7 +177,7 @@ class DatabaseManager:
         return (
             Blacklist
             .delete()
-            .where(user.discord_id == discord_id)
+            .where(Blacklist.discord_id == discord_id)
             .execute()) > 0
 
     def update_user_info(self, discord_id, new_username, date):

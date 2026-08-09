@@ -71,7 +71,7 @@ async def check_user(steamid, ctx: discord.ApplicationContext):
     """
     db = Dbo()
     if steamid is None:
-        steamid = await db.get_steamid_from_db(str(ctx.author.id))
+        steamid = await db.get_steam_user(str(ctx.author.id))
         steamid = steamid.steam_id
     steamid = await process_user_or_steamid(steamid)
     return steamid

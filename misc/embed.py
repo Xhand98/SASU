@@ -5,7 +5,7 @@ from db.models import SteamAccount
 def create_embed(
     em_title: str,
     em_description: str,
-    em_color: discord.ColorSteamAccount,
+    em_color: discord.Color,
     author: tuple = None,
     footer: tuple = None,
     tables: list = None,
@@ -89,7 +89,7 @@ def create_embed(
 
     if image is not None:
         try:
-            Embed.set_imageSteamAccount(url=image)
+            Embed.set_image(url=image)
         except (ValueError, IndexError, TypeError, discord.HTTPException) as error:
             print("An error occurred while adding an image to the embed")
             Embed.add_field(name="Add Image Error", value=error, inline=False)
