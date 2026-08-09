@@ -1,4 +1,3 @@
-import asyncio
 import discord
 import re
 from discord.ext import commands
@@ -10,7 +9,7 @@ from misc.utils import (
     check_user,
     user_info,
     get_steamh,
-    normalize_data,
+    verify_user
 )
 import getrequests.getinfo as getinfo
 import getrequests.getachievements as getachievements
@@ -68,13 +67,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         try:
-            if steamid is None:
-                steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-                steamid = str(steamid.steam_id)
-                steamid = await check_user(steamid, ctx)
-            else:
-                steamid = str(steamid)
-                steamid = await check_user(steamid, ctx)
+            steamid = await verify_user(ctx, steamid=steamid)
 
             if steamid:
                 hours = await get_steamh(steamid)
@@ -163,11 +156,7 @@ class UserCommands(commands.Cog):
             otherwise a string with an error message.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
 
         if steamid:
             games = await getinfo.get_games(steamid)
@@ -206,11 +195,7 @@ class UserCommands(commands.Cog):
             otherwise a string with an error message.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
 
         if steamid:
             pic_data = await getinfo.get_pic(steamid)
@@ -250,11 +235,7 @@ class UserCommands(commands.Cog):
             discord.Embed: An embed containing the link to the user's profile.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
 
         if steamid:
             pic_data = await getinfo.get_pic(steamid)
@@ -290,11 +271,7 @@ class UserCommands(commands.Cog):
             otherwise a string with an error message.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
 
         if steamid:
             level = await getinfo.get_level(steamid)
@@ -332,11 +309,7 @@ class UserCommands(commands.Cog):
             otherwise a string with an error message.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
 
         if steamid:
             badges = await getinfo.get_badges(steamid)
@@ -372,11 +345,7 @@ class UserCommands(commands.Cog):
             otherwise a string with an error message.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
 
         if steamid:
             country = await getinfo.get_country(steamid)
@@ -518,11 +487,7 @@ class UserCommands(commands.Cog):
             otherwise a string with an error message.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
 
         if steamid:
             game = await getlatestgame.ejecutar(steamid)
@@ -570,11 +535,7 @@ class UserCommands(commands.Cog):
             of achievements the user has unlocked.
         """
         await ctx.defer()
-        if steamid is None:
-            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = await check_user(steamid.steam_id, ctx)
-        else:
-            steamid = await check_user(steamid, ctx)
+        steamid = await verify_user(ctx, steamid=steamid)
         # SITIO DEL ERROR
         if steamid:
             achievements = await getachievements.main(steamid)

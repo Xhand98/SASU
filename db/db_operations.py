@@ -2,7 +2,7 @@
 import os
 import sqlite3
 from pathlib import Path
-import shutil
+from db.models import SteamAccount
 from datetime import datetime
 from db.dbmanager import DatabaseManager as Dbm
 
@@ -41,7 +41,7 @@ class DatabaseOperations:
         self.db_path = './db/bot.db'
         self.backup_path = './db/backups'
 
-    async def get_steam_user(self, discord_id: str) -> str | None:
+    async def get_steam_user(self, discord_id: str) -> SteamAccount | None:
         """
         Retrieves Steam account information for
         a Discord user.

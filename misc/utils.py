@@ -1,6 +1,6 @@
 # utils.py
 from typing import Any, Coroutine
-
+from db.models import SteamAccount
 import discord
 from getrequests.getinfo import get_steamid, get_pic, get_hours
 from db.db_operations import DatabaseOperations as Dbo
@@ -85,6 +85,7 @@ async def user_info(steamid):
 
     Returns:
         The username of the user if the SteamID is valid,
+            steamid = await check_user(steamid, ctx)
         otherwise "User not found or data is private".
     """
     pic_data = await get_pic(steamid)
@@ -121,3 +122,24 @@ async def verify_banned(ctx: discord.ApplicationContext):
     if await db.is_banned(ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
         return 
+
+async def verify_user(
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
+        """
+        """
+        if steamid is None:
+            db = Dbo()
+            user: SteamAccount  = await db.get_steam_user(str(ctx.author.id))
+            steamid = user.steam_id
+            if user is None:
+                await ctx.respond(
+                                "If you want to setup the bot to work "
+                                "without putting the input, write </tutorial:1275183733116370950>."
+                            )
+                return None
+        else:
+            steamid = await check_user(steamid, ctx)
+        return steamid
+        
+
