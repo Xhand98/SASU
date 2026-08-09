@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from db.db_operations import DatabaseOperations
+from db.db_operations import DatabaseOperations as Dbo
 
 
 class EventHandlers(commands.Cog):
@@ -42,7 +42,7 @@ class EventHandlers(commands.Cog):
             The database operations object.
         """
         self.bot = bot
-        self.db_operations = DatabaseOperations(db_path)
+        self.db_operations = Dbo()
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -80,3 +80,4 @@ class EventHandlers(commands.Cog):
         if await self.db_operations.is_banned(ctx.author.id):
             await ctx.respond("You are banned from using this bot.")
             return
+        return False
