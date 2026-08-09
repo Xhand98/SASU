@@ -1,5 +1,7 @@
 # db_operations.py
 import os
+import sqlite3
+from pathlib import Path
 import shutil
 from datetime import datetime
 from db.dbmanager import DatabaseManager as Dbm
@@ -36,6 +38,8 @@ class DatabaseOperations:
             The path to the database file.
         """
         self.db = Dbm()
+        self.db_path = './db/bot.db'
+        self.backup_path = './db/backups'
 
     async def get_steam_user(self, discord_id: str) -> str | None:
         """
@@ -61,6 +65,7 @@ class DatabaseOperations:
         """
         Checks if a Discord user is banned from using the bot
 
+        
         Parameters
         ----------
         discord_id : int
@@ -122,11 +127,20 @@ class DatabaseOperations:
         The filename of the backup is in the format "YYYYMMDD_HHMMSS_backup.db",
         where the timestamp is the current local time when this function is called.
         """
-        file = self.db_path
+        self.backup_path = Path(self.backup_path)
+        self.backup_path.mkdir(parents=True, exist_ok=True)
+        
         time = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_dir = "./db/backup"
-        changed_name = os.path.join(backup_dir, f"{time}_backup.db")
-        shutil.copy(file, changed_name)
-        print(f"Backup created: {changed_name}")
+        backup_file = self.backup_path / f"{time}_backup.db"
+        
+        source = sqlite3.connect(self.db_path)
+        destination = sqlite3.connect(backup_file)
+        
+        with destination:
+            source.backup(destination)
+            
+        destination.close()
+        source.close()
+        print(f"Backup created: {backup_file}")
 
     # Add other database-related methods here
