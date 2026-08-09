@@ -117,7 +117,7 @@ async def verify_banned(ctx: discord.ApplicationContext):
     If the user is banned, send a message to
     the user and prevent the command from executing.
     """
-    db = Dbo('../db/users.db')
+    db = Dbo()
     if await db.is_banned(ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
         return 
