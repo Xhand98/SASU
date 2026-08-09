@@ -69,12 +69,9 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         try:
             if steamid is None:
-                print("passed no steamid")
                 steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
-                print(steamid, " desde que la enviamos")
                 steamid = str(steamid.steam_id)
                 steamid = await check_user(steamid, ctx)
-                print(steamid, " despues de checkusers")
             else:
                 steamid = str(steamid)
                 steamid = await check_user(steamid, ctx)
