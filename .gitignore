@@ -179,9 +179,9 @@ run*
 last_sasu_users.db
 users.db
 
-old db's/
-backups/
 
+backups/
+/db/*.db
 *backup*.db
 
 .idea/
