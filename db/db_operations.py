@@ -37,7 +37,7 @@ class DatabaseOperations:
         """
         # self.db_path = db_path
 
-    async def get_steamid_from_db(self, discord_id: str):
+    async def get_steam_user(self, discord_id: str) -> str | None:
         """
         Retrieves Steam account information for
         a Discord user.
@@ -54,10 +54,9 @@ class DatabaseOperations:
             A list of dictionaries containing
             the user's Steam account info
         """
-        
         db = Dbm()
         
-        return db.get_steam_info(discord_id).steam_id
+        return db.get_steam_info(discord_id)
 
     async def is_banned(self, discord_id):
         """

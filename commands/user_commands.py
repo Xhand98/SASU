@@ -70,7 +70,7 @@ class UserCommands(commands.Cog):
         try:
             if steamid is None:
                 print("passed no steamid")
-                steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+                steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
                 print(steamid, " desde que la enviamos")
                 steamid = str(steamid.steam_id)
                 steamid = await check_user(steamid, ctx)
@@ -112,7 +112,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamurl is None:
-            data = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            data = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = data.steam_id
             if steamid:
                 user_name = await user_info(steamid)
@@ -167,7 +167,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -210,7 +210,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -254,7 +254,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -294,7 +294,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -336,7 +336,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -376,7 +376,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -419,7 +419,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         try:
             if steamid is None:
-                steamid_data = await self.db_operations.get_steamid_from_db(
+                steamid_data = await self.db_operations.get_steam_user(
                     str(ctx.author.id)
                 )
                 if not steamid_data:
@@ -522,7 +522,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -574,7 +574,7 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamid is None:
-            steamid = await self.db_operations.get_steamid_from_db(str(ctx.author.id))
+            steamid = await self.db_operations.get_steam_user(str(ctx.author.id))
             steamid = await check_user(steamid.steam_id, ctx)
         else:
             steamid = await check_user(steamid, ctx)
@@ -666,7 +666,7 @@ class UserCommands(commands.Cog):
         await ctx.defer()
         try:
             discordid = str(ctx.author.id)
-            info = await self.db_operations.get_steamid_from_db(str(discordid))
+            info = await self.db_operations.get_steam_user(str(discordid))
             embedd = discord.Embed(
                 title=f"{ctx.author.name}'s Stored Information",
                 color=discord.Color.random(),
