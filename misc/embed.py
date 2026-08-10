@@ -106,7 +106,7 @@ def create_embed(
 
 def populate_user_embed(embed: discord.Embed, steam: SteamAccount, default_inline=True):
     """
-    Adds fields to an embed based on a list of tables.
+    Adds fields to an embed based on Models.
 
     Parameters
     ----------
