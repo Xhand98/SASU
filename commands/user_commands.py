@@ -505,7 +505,12 @@ class UserCommands(commands.Cog):
                 result = discord.Embed(
                     title=f"{user_name}'s Latest Game", color=discord.Color.random()
                 )
-                result.set_thumbnail(url=icon_url)
+                
+                if icon_url is None:
+                    result.set_thumbnail(url="https://dummyimage.com/32x32/000/fff")
+                else:
+                    result.set_thumbnail(url=icon_url)
+                
                 result.description = f"[{game.name}](https://store.steampowered.com/app/{game.appid}) \n Time played: {game.playtime_forever / 60}h"
                 
                 result.set_author(
