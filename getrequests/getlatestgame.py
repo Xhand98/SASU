@@ -1,5 +1,5 @@
 from typing import List
-
+import json
 import aiohttp
 import os
 from pydantic import BaseModel, Field
@@ -59,7 +59,6 @@ async def ejecutar(user: str) -> GameShort | None:
                         return None
                     raw = await response.read()
         
-        import json
         data = json.loads(raw)
         
         steam_response: CompactSteamResponse = CompactSteamResponse.model_validate(data)
