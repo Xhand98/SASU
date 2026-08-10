@@ -3,6 +3,7 @@ import re
 from discord.ext import commands
 from db.db_operations import DatabaseOperations as Dbo
 from db.dbmanager import DatabaseManager as Dbm
+from db.models import SteamAccount
 from misc import embed
 from misc.utils import (
     process_user_or_steamid,
@@ -102,10 +103,13 @@ class UserCommands(commands.Cog):
         """
         await ctx.defer()
         if steamurl is None:
-            data = await self.db_operations.get_steam_user(str(ctx.author.id))
-            steamid = data.steam_id
+            user: SteamAccount = await self.db_operations.get_steam_user(str(ctx.author.id))
+            if user is None:
+                ctx.respond("Steamid couldn't be found.")
+                return
+            steamid = user.steam_id
             if steamid:
-                user_name = await user_info(steamid)
+                user_name = user.username
                 result = discord.Embed(
                     title=f"{user_name}'s Steam ID",
                     description=f"{user_name}'s Steam ID is {steamid}",
