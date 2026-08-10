@@ -88,7 +88,6 @@ async def user_info(steamid):
 
     Returns:
         The username of the user if the SteamID is valid,
-            steamid = await check_user(steamid, ctx)
         otherwise "User not found or data is private".
     """
     pic_data = await get_pic(steamid)
