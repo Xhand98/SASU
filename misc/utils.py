@@ -131,13 +131,15 @@ async def verify_user(
         if steamid is None:
             db = Dbo()
             user: SteamAccount  = await db.get_steam_user(str(ctx.author.id))
-            steamid = user.steam_id
+            
             if user is None:
                 await ctx.respond(
                                 "If you want to setup the bot to work "
                                 "without putting the input, write </tutorial:1275183733116370950>."
                             )
                 return None
+            else: 
+                steamid = user.steam_id
         else:
             steamid = await check_user(steamid, ctx)
         return steamid
