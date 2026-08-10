@@ -201,6 +201,8 @@ class DatabaseManager:
         updated = (
             DiscordUser(
                 username = new_username
+            ).update(
+                username=new_username
             )
             .where(
                 DiscordUser.discord_id == discord_id
