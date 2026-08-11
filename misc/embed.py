@@ -8,7 +8,7 @@ def create_embed(
     em_color: discord.Color,
     author: tuple = None,
     footer: tuple = None,
-    tables: list = None,
+    steam_account: SteamAccount = None,
     image: str = None,
     thumbnail: str = None,
     em_timestamp: datetime.datetime = None,
@@ -28,9 +28,7 @@ def create_embed(
         The author of the embed. If not None, should be a tuple of (name, icon_url).
     footer : tuple, optional
         The footer of the embed. If not None, should be a tuple of (text, icon_url).
-    tables : list, optional
-        The tables to add to the embed. If not None, should be a list of tuples.
-    image : str, optional
+    steam_account : SteamAccount, optional The Steam account used to populate the embed.image : str, optional
         The image to add to the embed. If not None, should be a URL.
     thumbnail : str, optional
         The thumbnail to add to the embed. If not None, should be a URL.
@@ -84,8 +82,8 @@ def create_embed(
             print("An error occurred while adding the footer")
             Embed.set_footer(text=f"Create Footer Error \r \r Error: {error}")
 
-    if tables is not None:
-        populate_user_embed(Embed, tables)
+    if steam_account is not None:
+        populate_user_embed(Embed, steam_account)
 
     if image is not None:
         try:
