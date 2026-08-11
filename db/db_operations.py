@@ -1,6 +1,8 @@
 # db_operations.py
 import os
-import shutil
+import sqlite3
+from pathlib import Path
+from db.models import SteamAccount
 from datetime import datetime
 from db.dbmanager import DatabaseManager as Dbm
 
@@ -21,7 +23,7 @@ class DatabaseOperations:
         a Discord user.
     """
 
-    def __init__(self, db_path):
+    def __init__(self):
         """
         Initializes a DatabaseOperations object.
 
@@ -35,9 +37,11 @@ class DatabaseOperations:
         self.db_path : str
             The path to the database file.
         """
-        self.db_path = db_path
+        self.db = Dbm()
+        self.db_path = './db/bot.db'
+        self.backup_path = './db/backups'
 
-    async def get_steamid_from_db(self, discord_id: str):
+    async def get_steam_user(self, discord_id: str) -> SteamAccount | None:
         """
         Retrieves Steam account information for
         a Discord user.
@@ -54,16 +58,14 @@ class DatabaseOperations:
             A list of dictionaries containing
             the user's Steam account info
         """
-        db = Dbm(db_path=self.db_path)
-        db.connect()
-        data = db.get_steam_info(discord_id)
-        db.close()
-        return data
+        
+        return self.db.get_steam_info(discord_id)
 
-    async def is_banned(self, discord_id):
+    async def is_banned(self, discord_id: int):
         """
         Checks if a Discord user is banned from using the bot
 
+        
         Parameters
         ----------
         discord_id : int
@@ -74,11 +76,8 @@ class DatabaseOperations:
         bool
             True if the user is banned, False otherwise
         """
-        db = Dbm(db_path=self.db_path)
-        db.connect()
-        queso = db.isbanned(discord_id)
-        db.close()
-        return queso
+        
+        return self.db.isbanned(discord_id)
 
     async def ban_user(self, discord_id):
         """
@@ -98,10 +97,7 @@ class DatabaseOperations:
         Exception
             If an error occurs during the ban.
         """
-        db = Dbm(db_path=self.db_path)
-        db.connect()
-        db.ban(discord_id)
-        db.close()
+        return self.db.ban(discord_id)
 
     async def unban_user(self, discord_id):
         """
@@ -121,10 +117,8 @@ class DatabaseOperations:
         Exception
             If an error occurs during the unban.
         """
-        db = Dbm(db_path=self.db_path)
-        db.connect()
-        db.unban(discord_id)
-        db.close()
+        
+        self.db.unban(discord_id)
 
     def backup_database(self):
         """
@@ -133,11 +127,20 @@ class DatabaseOperations:
         The filename of the backup is in the format "YYYYMMDD_HHMMSS_backup.db",
         where the timestamp is the current local time when this function is called.
         """
-        file = self.db_path
+        self.backup_path = Path(self.backup_path)
+        self.backup_path.mkdir(parents=True, exist_ok=True)
+        
         time = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_dir = "./db/backup"
-        changed_name = os.path.join(backup_dir, f"{time}_backup.db")
-        shutil.copy(file, changed_name)
-        print(f"Backup created: {changed_name}")
+        backup_file = self.backup_path / f"{time}_backup.db"
+        
+        source = sqlite3.connect(self.db_path)
+        destination = sqlite3.connect(backup_file)
+        
+        with destination:
+            source.backup(destination)
+            
+        destination.close()
+        source.close()
+        print(f"Backup created: {backup_file}")
 
     # Add other database-related methods here

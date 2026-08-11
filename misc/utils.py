@@ -1,6 +1,6 @@
 # utils.py
 from typing import Any, Coroutine
-
+from db.models import SteamAccount
 import discord
 from getrequests.getinfo import get_steamid, get_pic, get_hours
 from db.db_operations import DatabaseOperations as Dbo
@@ -52,7 +52,7 @@ async def is_authorized(user: discord.User) -> Coroutine[Any, Any, Any]:
     Returns:
 
     """
-    db = Dbo(db_path='../db/users.db')
+    db = Dbo()
     return True # PONER EL ISADMIN
 
 
@@ -69,10 +69,13 @@ async def check_user(steamid, ctx: discord.ApplicationContext):
     Returns:
     int | str | None: The SteamID if the user has one, otherwise None.
     """
-    db = Dbo('../db/users.db')
+    db = Dbo()
     if steamid is None:
-        steamid = await db.get_steamid_from_db(str(ctx.author.id))
-        steamid = steamid[0][0]
+        user = await db.get_steam_user(str(ctx.author.id))
+        if user is None:
+            ctx.respond("User not found.")
+            return None
+        steamid = steamid.steam_id
     steamid = await process_user_or_steamid(steamid)
     return steamid
 
@@ -117,7 +120,30 @@ async def verify_banned(ctx: discord.ApplicationContext):
     If the user is banned, send a message to
     the user and prevent the command from executing.
     """
-    db = Dbo('../db/users.db')
+    db = Dbo()
     if await db.is_banned(ctx.author.id):
         await ctx.respond("You are banned from using this bot.")
-        return
+        return 
+
+async def verify_user(
+        ctx: discord.ApplicationContext, *, steamid: str | None = None
+    ):
+        """
+        """
+        if steamid is None:
+            db = Dbo()
+            user: SteamAccount  = await db.get_steam_user(str(ctx.author.id))
+            
+            if user is None:
+                await ctx.respond(
+                                "If you want to setup the bot to work "
+                                "without putting the input, write </tutorial:1275183733116370950>."
+                            )
+                return None
+            else: 
+                steamid = user.steam_id
+        else:
+            steamid = await check_user(steamid, ctx)
+        return steamid
+        
+
